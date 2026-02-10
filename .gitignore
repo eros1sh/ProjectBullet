@@ -346,6 +346,7 @@ ASALocalRun/
 # ProjectBullet specific
 crash.log
 build_test/
+nul
 
 # Claude Code
 .claude/
