@@ -1,0 +1,69 @@
+<Page x:Class="ProjectBullet.Native.Views.Dialogs.MarketplaceLoginDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      mc:Ignorable="d"
+      d:DesignHeight="320" d:DesignWidth="400"
+      MinWidth="380"
+      Background="{DynamicResource BackgroundSecondary}"
+      Title="Marketplace Account">
+
+    <Border Padding="20">
+        <StackPanel MaxWidth="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <TabControl x:Name="tabControl" Background="Transparent">
+                <!-- Login Tab -->
+                <TabItem Header="Login">
+                    <StackPanel Margin="0 15 0 0">
+                        <Label>Username</Label>
+                        <TextBox x:Name="loginUsername" Width="280" Margin="0 0 0 10" />
+                        <Label>Password</Label>
+                        <PasswordBox x:Name="loginPassword" Width="280" Margin="0 0 0 10" KeyDown="LoginPasswordKeyDown" />
+                        <Button Click="DoLogin" Style="{StaticResource StyledSuccessButton}"
+                                HorizontalAlignment="Center" Margin="0 5">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterialDesign Kind="LockOpen" />
+                                <TextBlock VerticalAlignment="Center" Margin="5 0">Login</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Register Tab -->
+                <TabItem Header="Register">
+                    <StackPanel Margin="0 15 0 0">
+                        <Label>Username</Label>
+                        <TextBox x:Name="registerUsername" Width="280" Margin="0 0 0 10" />
+                        <Label>Password</Label>
+                        <PasswordBox x:Name="registerPassword" Width="280" Margin="0 0 0 10" />
+                        <Label>Confirm Password</Label>
+                        <PasswordBox x:Name="registerConfirmPassword" Width="280" Margin="0 0 0 10" KeyDown="RegisterPasswordKeyDown" />
+                        <Button Click="DoRegister" Style="{StaticResource StyledSuccessButton}"
+                                HorizontalAlignment="Center" Margin="0 5">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterialDesign Kind="PersonAdd" />
+                                <TextBlock VerticalAlignment="Center" Margin="5 0">Register</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+
+            <TextBlock x:Name="errorText" Text="" Foreground="Red" FontSize="12"
+                       TextAlignment="Center" HorizontalAlignment="Center"
+                       TextWrapping="Wrap" Margin="0 10 0 0" />
+
+            <Button Click="Logout" Style="{StaticResource StyledWarningButton}"
+                    HorizontalAlignment="Center" Margin="0 5"
+                    x:Name="logoutButton">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterialDesign Kind="ExitToApp" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Logout</TextBlock>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+    </Border>
+</Page>

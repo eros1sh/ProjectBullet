@@ -1,0 +1,139 @@
+<Page x:Class="ProjectBullet.Native.Views.Pages.Marketplace"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="900"
+      Title="Marketplace">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <DockPanel Grid.Row="0" Margin="0 0 0 5">
+            <Label FontSize="24" FontWeight="Bold" DockPanel.Dock="Left">Marketplace</Label>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Label Content="{Binding Username}" VerticalAlignment="Center" Margin="0 0 5 0"/>
+                <Button Style="{StaticResource StyledSuccessButton}" Click="BrowserLogin" Margin="0 0 5 0"
+                        Visibility="{Binding IsRegisteredUser, Converter={StaticResource BoolToVis}}">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterialDesign Kind="LockOpen" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Browser Login</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="loginLogoutButton" Style="{StaticResource StyledPrimaryButton}" Click="LoginLogout" Margin="0 0 5 0">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterialDesign Kind="Person" />
+                        <TextBlock x:Name="loginLogoutText" VerticalAlignment="Center" Margin="5 0" Text="{Binding LoginButtonText}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Filter bar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 5">
+            <Label VerticalAlignment="Center">Category</Label>
+            <ComboBox x:Name="categoryCombo" Width="120" Margin="0 0 10 0" SelectionChanged="CategoryChanged">
+                <ComboBoxItem Content="all" IsSelected="True" />
+                <ComboBoxItem Content="config" />
+                <ComboBoxItem Content="plugin" />
+            </ComboBox>
+            <Label VerticalAlignment="Center">Sort</Label>
+            <ComboBox x:Name="sortCombo" Width="120" Margin="0 0 10 0" SelectionChanged="SortChanged">
+                <ComboBoxItem Content="newest" IsSelected="True" />
+                <ComboBoxItem Content="oldest" />
+                <ComboBoxItem Content="downloads" />
+                <ComboBoxItem Content="name" />
+            </ComboBox>
+            <TextBox x:Name="searchBox" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged}"
+                     Width="250" Margin="0 0 5 0" KeyDown="SearchBoxKeyDown" />
+            <Button Style="{StaticResource StyledPrimaryButton}" Click="Search" Margin="0 0 5 0">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterialDesign Kind="Search" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Search</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Style="{StaticResource StyledSuccessButton}" Click="Refresh">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconRadixIcons Kind="Update" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Refresh</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- Items list -->
+        <ListView x:Name="itemsListView" Grid.Row="2"
+                  ItemsSource="{Binding Items}"
+                  Foreground="{DynamicResource ForegroundMain}"
+                  Background="Transparent"
+                  BorderThickness="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="" Width="36">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding AvatarUrl}" Width="24" Height="24"
+                                       RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Clip>
+                                        <EllipseGeometry Center="12,12" RadiusX="12" RadiusY="12" />
+                                    </Image.Clip>
+                                </Image>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="150" />
+                    <GridViewColumn Header="Author" DisplayMemberBinding="{Binding Author}" Width="110" />
+                    <GridViewColumn Header="Category" DisplayMemberBinding="{Binding Category}" Width="80" />
+                    <GridViewColumn Header="Version" DisplayMemberBinding="{Binding Version}" Width="70" />
+                    <GridViewColumn Header="Downloads" DisplayMemberBinding="{Binding Downloads}" Width="80" />
+                    <GridViewColumn Header="Updated" DisplayMemberBinding="{Binding UpdatedAtDisplay}" Width="90" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Footer -->
+        <DockPanel Grid.Row="3" Margin="0 5 0 0">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <Button Style="{StaticResource StyledPrimaryButton}" Click="PrevPage" Margin="0 0 5 0">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterialDesign Kind="ChevronLeft" />
+                        <TextBlock VerticalAlignment="Center" Margin="3 0">Prev</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Label Content="{Binding PageInfo}" VerticalAlignment="Center" Margin="0 0 5 0"/>
+                <Button Style="{StaticResource StyledPrimaryButton}" Click="NextPage" Margin="0 0 10 0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Margin="3 0">Next</TextBlock>
+                        <iconPacks:PackIconMaterialDesign Kind="ChevronRight" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <Button x:Name="updateButton" Style="{StaticResource StyledWarningButton}" Click="UpdateItem" Margin="0 0 5 0" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterialDesign Kind="CloudUpload" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Update</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource StyledSuccessButton}" Click="Download" Margin="0 0 5 0">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterialDesign Kind="CloudDownload" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Download</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Label Content="{Binding StatusMessage}" VerticalAlignment="Center" />
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Page>

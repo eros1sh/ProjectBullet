@@ -1,0 +1,118 @@
+﻿<Page x:Class="ProjectBullet.Native.Views.Pages.Monitor"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Native.Views.Pages"
+      mc:Ignorable="d"
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="Monitor">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Summary Cards Row -->
+        <WrapPanel Grid.Row="0" Margin="0 5 0 10" HorizontalAlignment="Left">
+            <!-- Total Jobs -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL JOBS" FontSize="10" Foreground="{DynamicResource ForegroundMain}" Opacity="0.6"/>
+                    <TextBlock Text="{Binding TotalJobs}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundMain}"/>
+                </StackPanel>
+            </Border>
+            <!-- Running -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="RUNNING" FontSize="10" Foreground="{DynamicResource ForegroundGood}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding RunningJobs}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}"/>
+                </StackPanel>
+            </Border>
+            <!-- Total Hits -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL HITS" FontSize="10" Foreground="{DynamicResource ForegroundGood}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding TotalHits}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}"/>
+                </StackPanel>
+            </Border>
+            <!-- Total Tested -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="TESTED" FontSize="10" Foreground="{DynamicResource ForegroundMain}" Opacity="0.6"/>
+                    <TextBlock Text="{Binding TotalTested}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundMain}"/>
+                </StackPanel>
+            </Border>
+            <!-- Total CPM -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL CPM" FontSize="10" Foreground="{DynamicResource ForegroundCustom}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding TotalCPM}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundCustom}"/>
+                </StackPanel>
+            </Border>
+            <!-- Errors -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="ERRORS" FontSize="10" Foreground="{DynamicResource ForegroundBad}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding TotalErrors}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}"/>
+                </StackPanel>
+            </Border>
+            <!-- RAM -->
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15 8" Margin="0 0 8 0">
+                <StackPanel>
+                    <TextBlock Text="RAM" FontSize="10" Foreground="{DynamicResource ForegroundRetry}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding MemoryUsage}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundRetry}"/>
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+
+        <!-- Section Title -->
+        <TextBlock Grid.Row="1" Text="Jobs" FontSize="16" FontWeight="Bold"
+                   Foreground="{DynamicResource ForegroundMain}" Margin="0 0 0 5"/>
+
+        <!-- Per-Job Table -->
+        <ListView Grid.Row="2"
+                  ItemsSource="{Binding JobItems}"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  Foreground="{DynamicResource ForegroundMain}">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource BackgroundSecondary}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundMain}"/>
+                    <Setter Property="BorderThickness" Value="0 0 1 1"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BackgroundMain}"/>
+                    <Setter Property="Padding" Value="5 3"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="FontSize" Value="12"/>
+                </Style>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{DynamicResource ForegroundMain}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="0 2"/>
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                    <Setter Property="FontSize" Value="12"/>
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="ID" Width="40" DisplayMemberBinding="{Binding Id}"/>
+                    <GridViewColumn Header="Status" Width="75" DisplayMemberBinding="{Binding Status}"/>
+                    <GridViewColumn Header="Config" Width="140" DisplayMemberBinding="{Binding ConfigName}"/>
+                    <GridViewColumn Header="Bots" Width="45" DisplayMemberBinding="{Binding Bots}"/>
+                    <GridViewColumn Header="Tested" Width="65" DisplayMemberBinding="{Binding Tested}"/>
+                    <GridViewColumn Header="Hits" Width="55" DisplayMemberBinding="{Binding Hits}"/>
+                    <GridViewColumn Header="Custom" Width="60" DisplayMemberBinding="{Binding Custom}"/>
+                    <GridViewColumn Header="Fails" Width="55" DisplayMemberBinding="{Binding Fails}"/>
+                    <GridViewColumn Header="Errors" Width="55" DisplayMemberBinding="{Binding Errors}"/>
+                    <GridViewColumn Header="CPM" Width="55" DisplayMemberBinding="{Binding CPM}"/>
+                    <GridViewColumn Header="Progress" Width="70" DisplayMemberBinding="{Binding ProgressString}"/>
+                    <GridViewColumn Header="Elapsed" Width="70" DisplayMemberBinding="{Binding Elapsed}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Page>

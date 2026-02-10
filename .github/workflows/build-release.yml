@@ -1,0 +1,119 @@
+name: Build + Release
+
+on:
+  push:
+    branches:
+    - 'master'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # Only run if the commit message contains the string [build]
+    if: contains(github.event.head_commit.message, '[build]')
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Unit and integration tests
+      run: dotnet test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+
+    # Checkout the repository
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # Read the version
+    - name: Read version
+      run: echo "VERSION=$(head -n 1 ProjectBullet.Native/version.txt)" >> $GITHUB_ENV
+
+    # Build native client
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Build Native Client (win-x64)
+      run: dotnet publish ProjectBullet.Native -c Release -r win-x64 --self-contained false -o ./build/native-win-x64
+
+    - name: Build Native Client (win-x86)
+      run: dotnet publish ProjectBullet.Native -c Release -r win-x86 --self-contained false -o ./build/native-win-x86
+
+    - name: Build Native Client (win-arm64)
+      run: dotnet publish ProjectBullet.Native -c Release -r win-arm64 --self-contained false -o ./build/native-win-arm64
+
+    - name: Build Native Updater (win-x64)
+      run: dotnet publish ProjectBullet.Native.Updater -c Release -r win-x64 -o ./build/updater-win-x64
+
+    - name: Build Native Updater (win-x86)
+      run: dotnet publish ProjectBullet.Native.Updater -c Release -r win-x86 -o ./build/updater-win-x86
+
+    - name: Build Native Updater (win-arm64)
+      run: dotnet publish ProjectBullet.Native.Updater -c Release -r win-arm64 -o ./build/updater-win-arm64
+
+    # Package release artifacts
+    - name: Package release artifacts
+      run: |
+        mkdir -p .release
+        cd ./build/native-win-x64
+        zip -r ../../.release/ProjectBullet.Native-win-x64.zip ./*
+        cd ../native-win-x86
+        zip -r ../../.release/ProjectBullet.Native-win-x86.zip ./*
+        cd ../native-win-arm64
+        zip -r ../../.release/ProjectBullet.Native-win-arm64.zip ./*
+        cd ../..
+        cp ./build/updater-win-x64/ProjectBullet.Native.Updater.exe .release/pb-native-updater-win-x64.exe
+        cp ./build/updater-win-x86/ProjectBullet.Native.Updater.exe .release/pb-native-updater-win-x86.exe
+        cp ./build/updater-win-arm64/ProjectBullet.Native.Updater.exe .release/pb-native-updater-win-arm64.exe
+
+    # Upload the files to the release
+    - name: Upload ProjectBullet release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: '.release/*'
+        file_glob: true
+        release_name: ${{ env.VERSION }}
+        tag: ${{ env.VERSION }}
+        overwrite: false
+        prerelease: false
+        make_latest: true
+        body: |
+          ## ProjectBullet ${{ env.VERSION }}
+
+          This is a **RELEASE** build.
+
+          ### Download
+          - **Windows x64**: `ProjectBullet.Native-win-x64.zip`
+          - **Windows x86**: `ProjectBullet.Native-win-x86.zip`
+          - **Windows ARM64**: `ProjectBullet.Native-win-arm64.zip`
+
+          ### Requirements
+          - [.NET 9.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)
+
+    - name: Notify new build on discord
+      if: success()
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        DISCORD_EMBEDS: |
+          [
+            {
+              "title": "New ProjectBullet Release",
+              "description": "Release **${{ env.VERSION }}** is now available!",
+              "color": 5763719
+            }
+          ]
+      uses: Ilshidur/action-discord@master
+
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+      if: ${{ failure() }}
+      with:
+        wait-timeout-minutes: 5

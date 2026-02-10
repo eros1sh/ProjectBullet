@@ -1,0 +1,62 @@
+<Page x:Class="ProjectBullet.Native.Views.Dialogs.MarketplaceUploadDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      mc:Ignorable="d"
+      d:DesignHeight="420" d:DesignWidth="460"
+      MinWidth="440"
+      Background="{DynamicResource BackgroundSecondary}"
+      Title="Upload Item">
+
+    <Border Padding="20">
+        <StackPanel MaxWidth="440" HorizontalAlignment="Center">
+            <Label FontSize="16" FontWeight="Bold" Margin="0 0 0 10">Upload to Marketplace</Label>
+
+            <Label>Name</Label>
+            <TextBox x:Name="nameBox" Width="380" Margin="0 0 0 8" />
+
+            <Label>Category</Label>
+            <ComboBox x:Name="categoryCombo" Width="380" Margin="0 0 0 8">
+                <ComboBoxItem Content="config" IsSelected="True" />
+                <ComboBoxItem Content="plugin" />
+            </ComboBox>
+
+            <Label>Description</Label>
+            <TextBox x:Name="descriptionBox" Width="380" Height="60"
+                     TextWrapping="Wrap" AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto" Margin="0 0 0 8" />
+
+            <Label>Version</Label>
+            <TextBox x:Name="versionBox" Width="380" Text="1.0.0" Margin="0 0 0 8" />
+
+            <Label>Password (optional, for .pbc files)</Label>
+            <PasswordBox x:Name="passwordBox" Width="380" Margin="0 0 0 8" />
+
+            <Label>File</Label>
+            <DockPanel Width="380" Margin="0 0 0 8">
+                <Button DockPanel.Dock="Right" Click="BrowseFile"
+                        Style="{StaticResource StyledPrimaryButton}" Margin="5 0 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconForkAwesome Kind="File" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Browse</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBox x:Name="filePathBox" IsReadOnly="True" />
+            </DockPanel>
+
+            <TextBlock x:Name="errorText" Text="" Foreground="Red" FontSize="12"
+                       TextAlignment="Center" HorizontalAlignment="Center"
+                       TextWrapping="Wrap" Margin="0 5 0 5" />
+
+            <Button Click="DoUpload" Style="{StaticResource StyledSuccessButton}"
+                    HorizontalAlignment="Center" Margin="0 5">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterialDesign Kind="CloudUpload" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Upload</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Border>
+</Page>
