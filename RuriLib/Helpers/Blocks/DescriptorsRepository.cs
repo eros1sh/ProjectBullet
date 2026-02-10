@@ -7,6 +7,7 @@ using RuriLib.Models.Bots;
 using RuriLib.Models.Trees;
 using RuriLib.Models.Variables;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -175,41 +176,41 @@ namespace RuriLib.Helpers.Blocks
         /// Converts the return <paramref name="type"/> of a method to a <see cref="VariableType"/>.
         /// Returns null if the method returns <see cref="void"/> or <see cref="Task"/>.
         /// </summary>
+        private static readonly FrozenDictionary<Type, VariableType> s_typeMap = new Dictionary<Type, VariableType>
+        {
+            { typeof(string), VariableType.String },
+            { typeof(int), VariableType.Int },
+            { typeof(float), VariableType.Float },
+            { typeof(bool), VariableType.Bool },
+            { typeof(List<string>), VariableType.ListOfStrings },
+            { typeof(Dictionary<string, string>), VariableType.DictionaryOfStrings },
+            { typeof(byte[]), VariableType.ByteArray }
+        }.ToFrozenDictionary();
+
+        private static readonly FrozenDictionary<Type, VariableType> s_taskTypeMap = new Dictionary<Type, VariableType>
+        {
+            { typeof(Task<string>), VariableType.String },
+            { typeof(Task<int>), VariableType.Int },
+            { typeof(Task<float>), VariableType.Float },
+            { typeof(Task<bool>), VariableType.Bool },
+            { typeof(Task<List<string>>), VariableType.ListOfStrings },
+            { typeof(Task<Dictionary<string, string>>), VariableType.DictionaryOfStrings },
+            { typeof(Task<byte[]>), VariableType.ByteArray }
+        }.ToFrozenDictionary();
+
         public static VariableType? ToVariableType(Type type)
         {
             if (type == typeof(void))
                 return null;
 
-            var dict = new Dictionary<Type, VariableType>
-            {
-                { typeof(string), VariableType.String },
-                { typeof(int), VariableType.Int },
-                { typeof(float), VariableType.Float },
-                { typeof(bool), VariableType.Bool },
-                { typeof(List<string>), VariableType.ListOfStrings },
-                { typeof(Dictionary<string, string>), VariableType.DictionaryOfStrings },
-                { typeof(byte[]), VariableType.ByteArray }
-            };
-
-            if (dict.ContainsKey(type))
-                return dict[type];
+            if (s_typeMap.TryGetValue(type, out var varType))
+                return varType;
 
             if (type == typeof(Task))
                 return null;
 
-            var taskDict = new Dictionary<Type, VariableType>
-            {
-                { typeof(Task<string>), VariableType.String },
-                { typeof(Task<int>), VariableType.Int },
-                { typeof(Task<float>), VariableType.Float },
-                { typeof(Task<bool>), VariableType.Bool },
-                { typeof(Task<List<string>>), VariableType.ListOfStrings },
-                { typeof(Task<Dictionary<string, string>>), VariableType.DictionaryOfStrings },
-                { typeof(Task<byte[]>), VariableType.ByteArray }
-            };
-
-            if (taskDict.ContainsKey(type))
-                return taskDict[type];
+            if (s_taskTypeMap.TryGetValue(type, out var taskVarType))
+                return taskVarType;
 
             throw new InvalidCastException($"The type {type} could not be casted to VariableType");
         }

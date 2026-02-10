@@ -169,7 +169,7 @@ namespace RuriLib.Models.Blocks.Custom
                         if (!definedVariables.Contains(output.Name))
                             writer.Write($"{ToCSharpType(output.Type)} ");
 
-                        writer.WriteLine($"{output.Name} = {engineName}.Global.GetProperty(\"{output.Name}\").Value.{GetJintMethod(output.Type)};");
+                        writer.WriteLine($"{output.Name} = {engineName}.Global.Get(\"{output.Name}\").{GetJintMethod(output.Type)};");
                     }
 
                     break;

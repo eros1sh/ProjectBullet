@@ -1,5 +1,5 @@
-﻿using Jint;
-using RuriLib.Extensions;
+using Jint;
+using Jint.Native;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -15,7 +15,7 @@ namespace RuriLib.Tests.Functions.Interop
             engine.SetValue("x", 3);
             engine.SetValue("y", 5);
             engine.Execute("var result = x + y;");
-            Assert.Equal(8, engine.Global.GetProperty("result").Value.AsNumber().ToInt());
+            Assert.Equal(8, (int)engine.Global.Get("result").AsNumber());
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace RuriLib.Tests.Functions.Interop
             engine.SetValue("x", 3.5f);
             engine.SetValue("y", 5.2f);
             engine.Execute("var result = x + y;");
-            Assert.Equal(8.7f, engine.Global.GetProperty("result").Value.AsNumber().ToSingle());
+            Assert.Equal(8.7f, (float)engine.Global.Get("result").AsNumber());
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace RuriLib.Tests.Functions.Interop
             engine.SetValue("x", "my");
             engine.SetValue("y", "string");
             engine.Execute("var result = x + y;");
-            Assert.Equal("mystring", engine.Global.GetProperty("result").Value.AsString());
+            Assert.Equal("mystring", engine.Global.Get("result").AsString());
         }
 
         [Fact]
@@ -45,7 +45,10 @@ namespace RuriLib.Tests.Functions.Interop
             engine.SetValue("x", "a");
             engine.SetValue("y", "b");
             engine.Execute("var result = [ x, y ];");
-            var outputList = engine.Global.GetProperty("result").Value.AsArray().GetEnumerator().ToEnumerable().ToList();
+            var arr = engine.Global.Get("result").AsArray();
+            var outputList = new List<string>();
+            for (uint i = 0; i < arr.Length; i++)
+                outputList.Add(arr.Get(i.ToString()).AsString());
             Assert.Equal(2, outputList.Count);
             Assert.Equal("a", outputList[0]);
             Assert.Equal("b", outputList[1]);
@@ -57,7 +60,7 @@ namespace RuriLib.Tests.Functions.Interop
             var engine = new Engine();
             engine.SetValue("x", new List<string> { "a", "b" });
             engine.Execute("var result = x[0];");
-            Assert.Equal("a", engine.Global.GetProperty("result").Value.AsString());
+            Assert.Equal("a", engine.Global.Get("result").AsString());
         }
 
         [Fact]
@@ -66,7 +69,7 @@ namespace RuriLib.Tests.Functions.Interop
             var engine = new Engine();
             engine.SetValue("x", 1);
             engine.Execute("var y = x + 1;");
-            Assert.Null(engine.Global.GetProperty("result").Value);
+            Assert.True(engine.Global.Get("result").IsUndefined());
         }
     }
 }

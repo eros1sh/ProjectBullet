@@ -23,7 +23,7 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 - **HTTP Requests** — GET, POST, PUT, DELETE, PATCH, multipart, raw, and basic auth with full header control
 - **Puppeteer Browser Automation** — Headless/headful Chrome control for JavaScript-heavy sites
 - **String Functions** — Comprehensive string manipulation (regex, replace, split, substring, encoding, hashing)
-- **Crypto** — AES, RSA, HMAC, SHA, MD5, Base64, JWT, and more
+- **Crypto** — AES, RSA, HMAC, SHA, MD5, Base64, JWT, and more — optimized with .NET 9 static HashData APIs
 - **Captcha Solving** — Integration with popular captcha solving services
 - **Interop** — Execute external programs, PowerShell scripts, and system commands
 
@@ -150,13 +150,35 @@ Application settings are accessible from the **Settings** page and are persisted
 
 - **.NET 9.0** — Runtime and framework
 - **WPF** — Windows desktop UI with MVVM pattern
-- **Entity Framework Core 9** — Data persistence with SQLite
+- **Entity Framework Core 9.0.3** — Data persistence with SQLite
+- **Roslyn 5.0.0** — C# runtime scripting and compilation
+- **Jint 4.5.0** — JavaScript (ES2024) execution engine
+- **IronPython 3.4.1** — Python 3 scripting support
 - **MahApps.Metro** — Modern Windows UI controls and themes
 - **AvalonEdit** — Code editor with syntax highlighting
 - **PuppeteerSharp** — Headless Chrome automation
+- **Selenium 4.40.0** — WebDriver browser automation
 - **Telegram.Bot** — Telegram Bot API client
+- **MailKit 4.14.1** — SMTP/POP3/IMAP email protocols
+- **SSH.NET 2025.1.0** — SSH protocol support
+- **FluentFTP 53.0.2** — FTP protocol support
 - **BCrypt.Net** — Password hashing
 - **LiveCharts** — Real-time charting
+
+### Performance Optimizations
+- **Static HashData APIs** — All hash/HMAC computations (MD5, SHA1, SHA256, SHA384, SHA512) use .NET 9 zero-allocation static `HashData()` methods instead of `Create()`+`ComputeHash()` pattern
+- **FrozenDictionary** — Type-mapping lookups in block descriptors use `System.Collections.Frozen` for faster read-only dictionary access
+- **Fast Line Counting** — `FileDataPool` uses buffered byte-scanning with `ArrayPool<byte>` for wordlist line counting instead of LINQ `Count()`, significantly faster for large files
+- **Span-Based Operations** — Leverages `Span<byte>` and `ReadOnlySpan` across crypto and data processing paths
+
+## CI/CD
+
+GitHub Actions workflows with manual `workflow_dispatch` trigger support:
+
+- **Build + Release** — Triggered on push to `master` with `[build]` in commit message, or manually via "Run workflow"
+- **Build + Release | Staging** — Same for `staging` branch with prerelease tagging
+- **Run Tests** — Automated test execution on push/PR to `master` and `staging`
+- **Docker Build** — Multi-platform Docker image build and push
 
 ## Contributing
 

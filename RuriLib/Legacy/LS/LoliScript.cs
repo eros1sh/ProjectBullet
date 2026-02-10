@@ -522,7 +522,7 @@ namespace RuriLib.Legacy.LS
                             try
                             {
                                 // Add it to the variables and print info
-                                var value = jsengine.Global.GetProperty(name).Value;
+                                var value = jsengine.Global.Get(name);
                                 var isArray = value.IsArray();
 
                                 if (isArray)
