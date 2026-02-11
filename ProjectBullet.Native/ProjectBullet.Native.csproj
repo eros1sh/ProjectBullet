@@ -18,6 +18,7 @@
         <BeautyNoRuntimeInfo>False</BeautyNoRuntimeInfo>
         <BeautyUsePatch>True</BeautyUsePatch>
         <BeautyLogLevel>Info</BeautyLogLevel>
+        <BeautyExcludes>libSkiaSharp;libHarfBuzzSharp;e_sqlite3</BeautyExcludes>
     </PropertyGroup>
 
     <ItemGroup>

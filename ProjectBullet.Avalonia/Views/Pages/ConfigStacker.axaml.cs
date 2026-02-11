@@ -71,9 +71,6 @@ namespace ProjectBullet.Avalonia.Views.Pages
         private void SelectBlock(object sender, RoutedEventArgs e) => SelectBlock(sender);
         private void SelectBlock(object sender)
         {
-            var keyModifiers = KeyModifiers.None;
-            // In Avalonia we check via the visual tree or TopLevel
-            // For simplicity, we pass false for ctrl/shift here
             var block = (BlockViewModel)(sender as Control).Tag;
             vm.SelectBlock(block, false, false);
         }

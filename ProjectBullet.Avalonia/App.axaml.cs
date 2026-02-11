@@ -95,7 +95,7 @@ namespace ProjectBullet.Avalonia
                         new Views.Dialogs.AppLockDialog(settings.AppLockSettings),
                         "ProjectBullet - Locked");
 
-                    lockDialog.ShowDialog(null);
+                    _ = lockDialog.ShowDialog(null);
                     // If the dialog was cancelled (not confirmed), exit
                     // The AppLockDialog sets DialogResult to true on success
                 }

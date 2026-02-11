@@ -27,7 +27,7 @@ namespace RuriLib.Helpers
             "System.ServiceModel",
         };
 
-        public override Type BindToType(string assemblyName, string typeName)
+        public override Type BindToType(string? assemblyName, string typeName)
         {
             if (BlockedTypePatterns.Any(b => typeName.Contains(b, StringComparison.OrdinalIgnoreCase)))
                 throw new JsonSerializationException(
