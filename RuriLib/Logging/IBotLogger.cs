@@ -34,7 +34,7 @@ namespace RuriLib.Logging
         /// <summary>
         /// Logs the name of the method that called this method.
         /// </summary>
-        void LogHeader([CallerMemberName] string caller = null);
+        void LogHeader([CallerMemberName] string? caller = null);
 
         /// <summary>
         /// Logs a new <paramref name="message"/> with a given <paramref name="color"/>.

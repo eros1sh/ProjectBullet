@@ -72,6 +72,14 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 - **12ws (wssolver.net)** — New captcha provider block for configs; calls `wssolver.net/token` API and returns the solved token as text
 - **solvertr (solver.tr)** — New captcha provider block for configs; calls `solver.tr` API and returns the solved token as json
 
+### Auto-Update
+- **Automatic Updates** — The app checks GitHub for new releases daily; when a new version is found, a 10-second countdown dialog appears and the update proceeds automatically
+- **Silent Updater** — The standalone updater supports `--silent` mode for non-interactive updates launched from the app
+- **User Data Preservation** — All user data (`UserData/` folder: configs, wordlists, proxies, plugins, hits, settings) is preserved during updates
+- **Running Job Protection** — Auto-update is skipped when jobs are actively running to prevent data loss
+- **Configurable** — Auto-update can be enabled/disabled from Settings; manual update button always available on Home page
+- **Auto-Relaunch** — In silent mode, the updater automatically relaunches ProjectBullet after a successful update
+
 ### Security
 - **App Lock** — Protect the application with a password (BCrypt hashed) on startup
 - **Config Encryption** — Encrypt configs with password protection for secure sharing
@@ -140,7 +148,7 @@ All user data is stored in the `UserData/` folder:
 ### Settings
 Application settings are accessible from the **Settings** page and are persisted to `UserData/ProjectBulletSettings.json`:
 
-- **General** — Default config section, bot count behavior, logging
+- **General** — Default config section, bot count behavior, logging, auto-update toggle
 - **Customization** — Colors, themes, background images, sounds
 - **Telegram** — Bot token, chat ID, notification preferences, daily summaries, webhook relay setup
 - **App Lock** — Enable/disable, set password, auto-lock timeout

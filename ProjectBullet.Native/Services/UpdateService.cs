@@ -1,4 +1,6 @@
 using Newtonsoft.Json.Linq;
+using ProjectBullet.Core.Services;
+using ProjectBullet.Native.Helpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -21,6 +23,12 @@ namespace ProjectBullet.Native.Services
             : "Release";
 
         public event Action UpdateAvailable;
+
+        /// <summary>
+        /// Fired when auto-update is enabled and a new version is found.
+        /// The handler should show the auto-update countdown dialog.
+        /// </summary>
+        public event Action AutoUpdateRequested;
 
         public UpdateService()
         {
@@ -82,6 +90,20 @@ namespace ProjectBullet.Native.Services
                     if (IsUpdateAvailable)
                     {
                         UpdateAvailable?.Invoke();
+
+                        // Check if auto-update is enabled
+                        try
+                        {
+                            var settingsService = SP.GetService<ProjectBulletSettingsService>();
+                            if (settingsService.Settings.GeneralSettings.AutoUpdate)
+                            {
+                                AutoUpdateRequested?.Invoke();
+                            }
+                        }
+                        catch
+                        {
+                            // Settings service not available yet, skip auto-update
+                        }
                     }
                 }
                 catch

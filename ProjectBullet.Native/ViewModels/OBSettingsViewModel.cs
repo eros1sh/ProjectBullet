@@ -116,6 +116,16 @@ namespace ProjectBullet.Native.ViewModels
             }
         }
 
+        public bool AutoUpdate
+        {
+            get => General.AutoUpdate;
+            set
+            {
+                General.AutoUpdate = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<ProxyCheckTarget> proxyCheckTargetsCollection;
         public ObservableCollection<ProxyCheckTarget> ProxyCheckTargetsCollection
         {

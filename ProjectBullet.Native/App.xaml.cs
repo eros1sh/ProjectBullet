@@ -37,10 +37,12 @@ namespace ProjectBullet.Native
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
             TaskScheduler.UnobservedTaskException += OnTaskException;
 
+            var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            Directory.SetCurrentDirectory(exeDir);
             Directory.CreateDirectory("UserData");
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(exeDir)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             var serviceCollection = new ServiceCollection();
@@ -55,7 +57,9 @@ namespace ProjectBullet.Native
             var connectionLimit = config.GetSection("Resources").GetValue("ConnectionLimit", 1000);
 
             ThreadPool.SetMinThreads(workerThreads, ioThreads);
+#pragma warning disable SYSLIB0014 // ServicePointManager is obsolete but still needed for legacy HTTP connections
             ServicePointManager.DefaultConnectionLimit = connectionLimit;
+#pragma warning restore SYSLIB0014
 
             // Apply DB migrations or create a DB if it doesn't exist
             using (var serviceScope = serviceProvider.GetService<IServiceScopeFactory>().CreateScope())

@@ -1,0 +1,66 @@
+<Page x:Class="ProjectBullet.Native.Views.Dialogs.AutoUpdateDialog"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Native.Views.Dialogs"
+      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      mc:Ignorable="d"
+      d:DesignHeight="250" d:DesignWidth="450"
+      Title="Auto Update">
+
+    <StackPanel Margin="30">
+        <TextBlock
+            FontSize="14"
+            TextWrapping="Wrap"
+            TextAlignment="Center"
+            Foreground="{DynamicResource ForegroundMain}">
+            A new version
+            <Bold>
+            <Run Foreground="{DynamicResource ForegroundGood}"
+                 Text="{Binding RemoteVersion, Mode=OneWay}"/></Bold>
+            is available!
+            <LineBreak/>
+            Current version:
+            <Bold>
+            <Run Foreground="{DynamicResource ForegroundCustom}"
+                 Text="{Binding CurrentVersion, Mode=OneWay}"/></Bold>
+        </TextBlock>
+
+        <TextBlock
+            x:Name="countdownText"
+            FontSize="18"
+            FontWeight="Bold"
+            TextAlignment="Center"
+            Margin="0 15 0 0"
+            Foreground="{DynamicResource ForegroundCustom}"
+            Text="{Binding CountdownText, Mode=OneWay}"/>
+
+        <TextBlock
+            FontSize="11"
+            TextWrapping="Wrap"
+            TextAlignment="Center"
+            Margin="0 10 0 0"
+            Opacity="0.7"
+            Foreground="{DynamicResource ForegroundMain}"
+            Text="Your configs, wordlists, proxies and settings will be preserved."/>
+
+        <StackPanel Orientation="Horizontal" Margin="0 15 0 0"
+                    HorizontalAlignment="Center">
+            <Button x:Name="updateNowButton" Click="UpdateNow"
+                    Margin="0 0 10 0" Style="{StaticResource StyledSuccessButton}">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconRadixIcons Kind="Update" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Update Now</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="cancelButton" Click="Cancel"
+                    Style="{StaticResource StyledDangerButton}">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="Close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Cancel</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Page>

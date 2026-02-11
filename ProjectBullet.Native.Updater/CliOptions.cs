@@ -15,4 +15,7 @@ public class CliOptions
     
     [Option('c', "channel", Required = false, HelpText = "The channel to use for updates (staging, release)")]
     public BuildChannel? Channel { get; set; } = null;
+
+    [Option('s', "silent", Required = false, HelpText = "Run in silent mode (no interactive prompts, auto-proceed with update)")]
+    public bool Silent { get; set; } = false;
 }

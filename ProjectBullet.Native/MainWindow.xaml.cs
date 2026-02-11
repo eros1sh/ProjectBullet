@@ -6,6 +6,7 @@ using ProjectBullet.Native.Services;
 using ProjectBullet.Native.Utils;
 using ProjectBullet.Native.ViewModels;
 using ProjectBullet.Native.Views.Pages;
+using ProjectBullet.Native.Views.Dialogs;
 using RuriLib.Models.Configs;
 using RuriLib.Models.Jobs;
 using System;
@@ -90,6 +91,9 @@ namespace ProjectBullet.Native
 
             updateService = SP.GetService<UpdateService>();
             Title = $"ProjectBullet - {updateService.CurrentVersion} [{updateService.CurrentVersionType}]";
+
+            // Subscribe to auto-update events
+            updateService.AutoUpdateRequested += OnAutoUpdateRequested;
 
             // Set the theme
             var obSettingsService = SP.GetService<ProjectBulletSettingsService>();
@@ -311,6 +315,21 @@ namespace ProjectBullet.Native
             {
                 newLabel.Foreground = Brush.Get("ForegroundMenuSelected");
             }
+        }
+
+        private void OnAutoUpdateRequested()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // Don't auto-update if there are running jobs
+                var jobManager = SP.GetService<JobManagerService>();
+                if (jobManager.Jobs.Any(j => j.Status == JobStatus.Running))
+                    return;
+
+                new MainDialog(
+                    new AutoUpdateDialog(updateService.CurrentVersion, updateService.RemoteVersion),
+                    "Auto Update").ShowDialog();
+            });
         }
 
         private void OpenGitHub(object sender, RoutedEventArgs e)

@@ -50,13 +50,20 @@ public static class RequirementsChecker
     /// Checks if the .NET Windows Desktop Runtime is installed. If the user installed the SDK,
     /// it will still work because the runtime is included in the SDK.
     /// </summary>
-    public static async Task EnsureDotNetInstalledAsync()
+    public static async Task EnsureDotNetInstalledAsync(bool silent = false)
     {
         if (await IsRuntimeInstalledAsync())
         {
             return;
         }
-        
+
+        if (silent)
+        {
+            // In silent mode, automatically install the runtime
+            await InstallDotNetRuntimeAsync();
+            return;
+        }
+
         var installRuntime = AnsiConsole.Prompt(
             new ConfirmationPrompt($"The .NET Windows Desktop Runtime version {_dotnetVersion} or higher is required to run OpenBullet 2. " +
                                    "Do you want to download and install it now?"));
@@ -67,7 +74,7 @@ public static class RequirementsChecker
                                 $"Please install it from https://dotnet.microsoft.com/en-us/download/dotnet/{_dotnetVersion} " +
                                 "and relaunch the Updater");
         }
-        
+
         await InstallDotNetRuntimeAsync();
     }
 

@@ -94,7 +94,7 @@ namespace RuriLib.Logging
         }
 
         /// <inheritdoc/>
-        public void LogHeader([CallerMemberName] string caller = null)
+        public void LogHeader([CallerMemberName] string? caller = null)
         {
             // Do not log if called by lolicode
             if (!Enabled || ExecutingBlock == "LoliCode")

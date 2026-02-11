@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Authors>eros</Authors>
     <Nullable>enable</Nullable>
+    <NoWarn>CS8600;CS8601;CS8602;CS8603;CS8604;CS8605;CS8618;CS8619;CS8622;CS8625;CS8597;SYSLIB0039;CA1416</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

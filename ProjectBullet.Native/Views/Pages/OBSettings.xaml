@@ -64,8 +64,12 @@
                           IsChecked="{Binding GroupCapturesInDebugger}" 
                           VerticalContentAlignment="Center"
                           Margin="5 10 0 0"/>
-                <CheckBox Content="Ignore the wordlist name when removing duplicates from hits" 
-                          IsChecked="{Binding IgnoreWordlistNameOnHitsDedupe}" 
+                <CheckBox Content="Ignore the wordlist name when removing duplicates from hits"
+                          IsChecked="{Binding IgnoreWordlistNameOnHitsDedupe}"
+                          VerticalContentAlignment="Center"
+                          Margin="5 10 0 0"/>
+                <CheckBox Content="Automatically update when a new version is available (user data is preserved)"
+                          IsChecked="{Binding AutoUpdate}"
                           VerticalContentAlignment="Center"
                           Margin="5 10 0 0"/>
                 <Label Foreground="{DynamicResource ForegroundCustom}" Margin="0 10 0 0">Proxy check targets</Label>

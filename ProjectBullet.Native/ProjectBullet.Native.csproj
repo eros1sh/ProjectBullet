@@ -8,6 +8,7 @@
         <ApplicationIcon>logo.ico</ApplicationIcon>
         <DebugType>none</DebugType>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <NoWarn>NU1608;NU1902</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup>

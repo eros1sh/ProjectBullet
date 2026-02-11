@@ -6,6 +6,9 @@ on:
     - 'master'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -98,23 +101,3 @@ jobs:
 
           ### Requirements
           - [.NET 9.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)
-
-    - name: Notify new build on discord
-      if: success()
-      env:
-        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        DISCORD_EMBEDS: |
-          [
-            {
-              "title": "New ProjectBullet Release",
-              "description": "Release **${{ env.VERSION }}** is now available!",
-              "color": 5763719
-            }
-          ]
-      uses: Ilshidur/action-discord@master
-
-    - name: Setup upterm session
-      uses: lhotari/action-upterm@v1
-      if: ${{ failure() }}
-      with:
-        wait-timeout-minutes: 5

@@ -11,7 +11,7 @@ namespace RuriLib.Extensions
         /// </summary>
         /// <param name="list">The list to shuffle</param>
         /// <param name="rng">The random number generator</param>
-        public static void Shuffle<T>(this IList<T> list, Random rng = null)
+        public static void Shuffle<T>(this IList<T> list, Random? rng = null)
         {
             Random rand = rng ?? new Random();
             int n = list.Count;

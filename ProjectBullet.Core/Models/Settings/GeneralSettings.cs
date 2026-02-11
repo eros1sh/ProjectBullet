@@ -150,4 +150,10 @@ public class GeneralSettings
     /// Custom user-defined snippets for editor autocompletion.
     /// </summary>
     public List<CustomSnippet> CustomSnippets { get; set; } = new();
+
+    /// <summary>
+    /// Whether to automatically update the application when a new version is found on GitHub.
+    /// User data (configs, wordlists, proxies, plugins, hits, settings) is preserved during updates.
+    /// </summary>
+    public bool AutoUpdate { get; set; } = true;
 }

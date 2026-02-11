@@ -289,7 +289,9 @@ namespace RuriLib.Http
 
                     if (UseCustomCipherSuites)
                     {
+#pragma warning disable CA1416 // CipherSuitesPolicy is not supported on Windows
                         sslOptions.CipherSuitesPolicy = new CipherSuitesPolicy(AllowedCipherSuites);
+#pragma warning restore CA1416
                     }
 
                     connectionCommonStream = sslStream;

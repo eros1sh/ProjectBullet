@@ -213,5 +213,42 @@ namespace RuriLib.Blocks.Functions.List
 
             return list;
         }
+
+        [Block("Checks if a list contains a specific element")]
+        public static bool ListContains(BotData data, [Variable] List<string> list, string element)
+        {
+            var result = list.Contains(element);
+            data.Logger.LogHeader();
+            data.Logger.Log($"Contains '{element}': {result}", LogColors.YellowGreen);
+            return result;
+        }
+
+        [Block("Takes a specified number of elements from the beginning of a list")]
+        public static List<string> ListTake(BotData data, [Variable] List<string> list, int count)
+        {
+            var result = list.Take(count).ToList();
+            data.Logger.LogHeader();
+            data.Logger.Log($"Took {count} elements from list", LogColors.YellowGreen);
+            return result;
+        }
+
+        [Block("Skips a specified number of elements from the beginning of a list")]
+        public static List<string> ListSkip(BotData data, [Variable] List<string> list, int count)
+        {
+            var result = list.Skip(count).ToList();
+            data.Logger.LogHeader();
+            data.Logger.Log($"Skipped {count} elements, {result.Count} remaining", LogColors.YellowGreen);
+            return result;
+        }
+
+        [Block("Reverses the order of elements in a list")]
+        public static List<string> ListReverse(BotData data, [Variable] List<string> list)
+        {
+            var result = new List<string>(list);
+            result.Reverse();
+            data.Logger.LogHeader();
+            data.Logger.Log($"Reversed list with {result.Count} elements", LogColors.YellowGreen);
+            return result;
+        }
     }
 }
