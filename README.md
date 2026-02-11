@@ -227,7 +227,10 @@ GitHub Actions workflows with manual `workflow_dispatch` trigger support:
 
 ## Changelog
 
-### v0.0.2 (Current)
+### v0.0.3 (Current)
+- **OpenBullet 2 Migration** — One-click migration tool to import your existing OpenBullet 2 data into ProjectBullet. Supports both SQLite and LiteDB database formats with selective migration options for configs, proxy groups, wordlists, jobs, hits, and records. Includes automatic namespace remapping, wordlist ID mapping, WAL checkpoint handling, and duplicate detection with skip logic. Accessible from Settings page with a visual progress dialog.
+
+### v0.0.2
 - **17 New Automation Blocks**: GraphQL, gRPC, DNS Lookup, DNS-over-HTTPS, MQTT, TOTP/HOTP, QR Code, XML Parse, HTML Form Parser, Retry/Loop Control, Variable Watch, TOR Proxy, Python Script Enhancement
 - **HTTP/2 & HTTP/3 Support**: Full HTTP/2 support via SystemNet, experimental HTTP/3 (QUIC) support
 - **TLS Fingerprint Profiles**: Browser-specific cipher suite ordering for Chrome, Firefox, Safari, Edge

@@ -63,6 +63,11 @@ namespace ProjectBullet.Native.Views.Pages
         private async void SetupWebhook(object sender, RoutedEventArgs e) => await vm.SetupWebhookAsync();
         private async void DeleteWebhook(object sender, RoutedEventArgs e) => await vm.DeleteWebhookAsync();
 
+        private void OpenOB2Migration(object sender, RoutedEventArgs e)
+        {
+            new MainDialog(new OB2MigrationDialog(), "Migrate from OpenBullet 2", 550, 600).ShowDialog();
+        }
+
         private void ChooseBackgroundImage(object sender, RoutedEventArgs e)
         {
             var ofd = new OpenFileDialog

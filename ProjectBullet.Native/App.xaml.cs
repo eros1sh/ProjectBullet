@@ -106,6 +106,9 @@ namespace ProjectBullet.Native
                 new HybridWordlistRepository(service.GetService<ApplicationDbContext>(),
                 "UserData/Wordlists"));
 
+            // Transient services
+            services.AddTransient<OB2MigrationService>();
+
             // Singletons
             services.AddSingleton<VolatileSettingsService>();
             services.AddSingleton<ViewModelsService>();

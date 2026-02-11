@@ -304,6 +304,18 @@
                     <Label>Marketplace Account:</Label>
                     <Label Content="{Binding MarketplaceUsername}" FontWeight="Bold"/>
                 </StackPanel>
+                <Separator Opacity="0.5" Margin="5 20"/>
+                <Label FontSize="24" FontWeight="Bold" Margin="0 0 0 10">Migration</Label>
+                <TextBlock TextWrapping="Wrap" Margin="5 0 0 5"
+                           Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"
+                           Text="Import your data from an existing OpenBullet 2 installation including configs, proxies, wordlists, jobs, and hits."/>
+                <Button Style="{StaticResource StyledPrimaryButton}" Click="OpenOB2Migration"
+                        HorizontalAlignment="Left" Margin="5 10 5 5">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterialDesign Kind="ImportExport"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Migrate from OpenBullet 2</TextBlock>
+                    </StackPanel>
+                </Button>
                 <Separator Opacity="0.5" Margin="5 20"></Separator>
                 <Label FontSize="24" FontWeight="Bold" Margin="0 0 0 10">Customization</Label>
                 <CheckBox Content="Play a sound when a hit is found" 
