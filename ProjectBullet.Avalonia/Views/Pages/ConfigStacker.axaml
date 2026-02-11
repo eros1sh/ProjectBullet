@@ -1,0 +1,129 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.ConfigStacker"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      xmlns:converters="clr-namespace:ProjectBullet.Avalonia.Converters"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      KeyDown="PageKeyDown">
+
+    <UserControl.Resources>
+        <converters:BoolToThicknessConverter x:Key="BoolToThick" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="190" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,5" Spacing="2">
+            <Button Click="AddBlock"
+                     Padding="5,3"
+                     ToolTip.Tip="Add a new block"
+                     Classes="success">
+                <icons:Icon Value="mdi-plus" FontSize="12" />
+            </Button>
+            <Button Click="RemoveBlock"
+                     Padding="5,3"
+                     ToolTip.Tip="Remove the selected block"
+                     Classes="danger">
+                <icons:Icon Value="mdi-close" FontSize="12" />
+            </Button>
+            <Button Click="MoveBlockUp"
+                     Padding="5,3"
+                     ToolTip.Tip="Move the selected block up"
+                     Classes="primary">
+                <icons:Icon Value="mdi-chevron-up" FontSize="12" />
+            </Button>
+            <Button Click="MoveBlockDown"
+                     Padding="5,3"
+                     ToolTip.Tip="Move the selected block down"
+                     Classes="primary">
+                <icons:Icon Value="mdi-chevron-down" FontSize="12" />
+            </Button>
+            <Button Click="CloneBlock"
+                     Padding="5,3"
+                     ToolTip.Tip="Clone the selected block"
+                     Classes="styled">
+                <icons:Icon Value="mdi-content-copy" FontSize="12" />
+            </Button>
+            <Button Click="EnableDisableBlock"
+                     Padding="5,3"
+                     ToolTip.Tip="Enable/Disable the selected block"
+                     Classes="styled">
+                <icons:Icon Value="mdi-cancel" FontSize="12" />
+            </Button>
+            <Button Click="Undo"
+                     Padding="5,3"
+                     ToolTip.Tip="Undo"
+                     Classes="styled">
+                <icons:Icon Value="mdi-undo" FontSize="12" />
+            </Button>
+        </StackPanel>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Hidden"
+                      Grid.Row="1">
+            <ItemsControl
+                Margin="0,2,0,0"
+                ItemsSource="{Binding Stack}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            BorderBrush="{DynamicResource ThemeMain}"
+                            BorderThickness="{Binding Selected, Converter={StaticResource ResourceKey=BoolToThick}}"
+                            Background="{Binding BackgroundColor}"
+                            Width="185"
+                            Height="36"
+                            CornerRadius="4"
+                            Opacity="0.85"
+                            Tag="{Binding}"
+                            Click="SelectBlock">
+
+                            <TextBlock
+                                PointerPressed="SelectBlockPointer"
+                                Grid.Row="0"
+                                FontSize="11.5"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Center"
+                                TextAlignment="Center"
+                                Foreground="{Binding ForegroundColor}"
+                                Text="{Binding Label}"
+                                Tag="{Binding}"
+                                TextWrapping="Wrap" />
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <TextBlock Text="Block information"
+               FontSize="12"
+               HorizontalAlignment="Center"
+               Padding="0,8"
+               Foreground="{DynamicResource ForegroundCustom}"
+               VerticalAlignment="Center"
+               Grid.Column="1" />
+
+        <ScrollViewer
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto"
+            x:Name="blockInfo"
+            Grid.Row="1"
+            Grid.Column="1" />
+
+    </Grid>
+</UserControl>

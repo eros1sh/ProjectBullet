@@ -1,0 +1,129 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.ScriptBlockSettingsViewer"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             mc:Ignorable="d"
+             d:DesignHeight="650" d:DesignWidth="800">
+
+    <StackPanel
+        Margin="5 0"
+        HorizontalAlignment="Stretch">
+        <TextBlock
+            Text="{Binding NameAndId}"
+            FontSize="12"
+            FontWeight="Bold"
+            Margin="5 0 0 0"
+            TextWrapping="Wrap"
+            Foreground="#fec34d"/>
+        <TextBlock
+            Text="{Binding Block.Descriptor.Description}"
+            FontSize="12"
+            FontStyle="Italic"
+            Margin="5 5 0 0"
+            TextWrapping="Wrap"
+            Foreground="#fec34d"/>
+        <TextBlock
+            Text="{Binding Block.Descriptor.ExtraInfo}"
+            FontSize="10"
+            FontStyle="Italic"
+            Margin="5 5 0 0"
+            TextWrapping="Wrap"
+            Foreground="#fec34d"/>
+        <DockPanel>
+            <Label
+                DockPanel.Dock="Left"
+                Foreground="{DynamicResource ForegroundCustom}"
+                Content="Label:" />
+            <TextBox
+                Text="{Binding Label}"
+                DockPanel.Dock="Left" />
+        </DockPanel>
+        <Label
+            Content="Settings:"
+            Margin="0 5"
+            Foreground="{DynamicResource ForegroundCustom}" />
+
+        <DockPanel>
+            <Label
+                DockPanel.Dock="Left"
+                Content="Input variables:" />
+            <TextBox
+                Text="{Binding InputVariables}"
+                DockPanel.Dock="Left" />
+        </DockPanel>
+
+        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+            <Label
+                DockPanel.Dock="Left"
+                Content="Interpreter:" />
+            <ComboBox
+                SelectionChanged="InterpreterChanged"
+                ItemsSource="{Binding Interpreters}"
+                SelectedValue="{Binding Interpreter}" />
+        </StackPanel>
+
+        <Label Content="Output variables:" />
+
+        <Button x:Name="addOutputVariableButton" Click="AddOutputVariable" Margin="5 5 5 5"
+                        Classes="success"
+                        Width="70" HorizontalAlignment="Left" >
+            <StackPanel Orientation="Horizontal">
+                <icons:Icon Value="mdi-plus" />
+                <TextBlock VerticalAlignment="Center" Margin="5 0">Add</TextBlock>
+            </StackPanel>
+        </Button>
+        <ItemsControl ItemsSource="{Binding OutputVariablesCollection}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="0 5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" VerticalAlignment="Center" Content="Type" />
+                            <ComboBox
+                                Grid.Column="1"
+                                Margin="5 0"
+                                ItemsSource="{Binding $parent[ItemsControl].DataContext.VariableTypes}"
+                                SelectedValue="{Binding Type}" />
+                            <Label Grid.Column="2" VerticalAlignment="Center" Content="Name" />
+                            <TextBox Grid.Column="3" Text="{Binding Name}" Height="30" Margin="5 0" />
+                            <Button x:Name="removeOutputVariable" Tag="{Binding}" Grid.Column="4"
+                                            Click="RemoveOutputVariable" Margin="0 0 5 0" Classes="danger" >
+                                <StackPanel Orientation="Horizontal">
+                                    <icons:Icon Value="mdi-close" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <AvaloniaEdit:TextEditor
+            Height="400"
+            Margin="0 10 0 0"
+            x:Name="editor"
+            FontFamily="Consolas"
+            FontSize="10"
+            Foreground="Gainsboro"
+            Background="#111"
+            LostFocus="EditorLostFocus"
+            HorizontalAlignment="Stretch"
+            ShowLineNumbers="True"/>
+
+    </StackPanel>
+</UserControl>

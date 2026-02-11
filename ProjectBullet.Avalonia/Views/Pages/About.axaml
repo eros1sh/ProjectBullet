@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             d:DesignHeight="550" d:DesignWidth="780"
+             x:Class="ProjectBullet.Avalonia.Views.Pages.About">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Image Source="/Images/logohq.png" Width="120" Height="120" Margin="0,0,0,20" />
+
+            <TextBlock Text="ProjectBullet"
+                       FontSize="28" FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource ForegroundMain}"
+                       Margin="0,0,0,8" />
+
+            <TextBlock Text="Automation suite powered by .NET"
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource ForegroundMain}"
+                       Opacity="0.6"
+                       Margin="0,0,0,30" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <Button Classes="primary" Click="OpenGitHub" Padding="12,8" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="fa-brands fa-github" FontSize="16" />
+                        <TextBlock VerticalAlignment="Center" Margin="8,0,0,0" FontSize="14">@eros1sh</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Classes="primary" Click="OpenTelegram" Padding="12,8">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="fa-brands fa-telegram" FontSize="16" />
+                        <TextBlock VerticalAlignment="Center" Margin="8,0,0,0" FontSize="14">@eros_sh</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+            <Button x:Name="licenseButton" Classes="styled" Click="OpenLicense" Margin="0,5,5,5">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-text-box" FontSize="14" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">License</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="repoButton" Classes="styled" Click="OpenRepository" Margin="0,5,5,5">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="fa-brands fa-git-alt" FontSize="14" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Repository</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

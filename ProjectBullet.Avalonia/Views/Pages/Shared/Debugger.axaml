@@ -1,0 +1,188 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Shared.Debugger"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages.Shared"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      xmlns:uc="clr-namespace:ProjectBullet.Avalonia.Controls"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="5,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox FlowDirection="RightToLeft" Grid.Column="0" IsChecked="{Binding StepByStep}">
+                <TextBlock FlowDirection="LeftToRight" Text="SBS" ToolTip.Tip="Step by Step mode" />
+            </CheckBox>
+            <TextBlock Grid.Column="1" Text="Data" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Grid.Column="2" Text="{Binding TestData}" Height="30" Margin="5,0" />
+            <TextBlock Grid.Column="3" Text="Wordlist Type" VerticalAlignment="Center" Margin="5,0" />
+            <ComboBox Grid.Column="4"
+                ItemsSource="{Binding WordlistTypes}"
+                SelectedItem="{Binding WordlistType}" Height="30" Margin="5,0" />
+            <CheckBox Grid.Column="5" Content="Persist log" IsChecked="{Binding PersistLog}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0" IsChecked="{Binding UseProxy}"/>
+            <TextBlock Grid.Column="1" Text="Proxy" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox Grid.Column="2" Text="{Binding TestProxy}" Height="30" Margin="5,0" />
+            <ComboBox Grid.Column="3"
+                ItemsSource="{Binding ProxyTypes}"
+                SelectedItem="{Binding ProxyType}" Height="30" Margin="5,0,0,0" />
+            <StackPanel Grid.Column="4" Orientation="Horizontal">
+                <Button Click="Start"
+                    Classes="success"
+                    Width="60"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding CanStart}">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-play" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Start</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="TakeStep"
+                    Classes="primary"
+                    Width="80"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding CanTakeStep}">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-play" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Take Step</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Stop"
+                    Classes="danger"
+                    Width="60"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding CanStop}">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-stop" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Stop</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <TabControl Grid.Row="2"
+                    Background="Transparent"
+                    Margin="5,5,0,0"
+                    x:Name="tabControl">
+            <TabItem>
+                <TabItem.Header>
+                    <Button Click="ShowLog"
+                        Margin="-5,0,0,0"
+                        Classes="success"
+                        Width="60" HorizontalAlignment="Left" >
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-text-box-outline" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">Log</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0" x:Name="logScrollViewer">
+                        <SelectableTextBlock
+                            x:Name="logRTB"
+                            FontFamily="Consolas"
+                            FontSize="10"
+                            Foreground="Gainsboro"
+                            Background="#161616"
+                            Padding="5" />
+                    </ScrollViewer>
+                    <Grid Grid.Row="1" Margin="0,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding SearchString}"/>
+                        <Button Classes="styled" Click="Search" Grid.Column="1" Margin="5,0,0,0" >
+                            <StackPanel Orientation="Horizontal">
+                                <icons:Icon Value="mdi-magnify" />
+                                <TextBlock VerticalAlignment="Center" Margin="5,0">Search</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Classes="styled" Click="PreviousMatch" Grid.Column="2" Margin="5,0,0,0" >
+                            <StackPanel Orientation="Horizontal">
+                                <icons:Icon Value="mdi-chevron-left" />
+                            </StackPanel>
+                        </Button>
+                        <TextBlock Grid.Column="3" Text="{Binding MatchInfo}" VerticalAlignment="Center" Margin="5,0"/>
+                        <Button Classes="styled" Click="NextMatch" Grid.Column="4" Margin="5,0,0,0" >
+                            <StackPanel Orientation="Horizontal">
+                                <icons:Icon Value="mdi-chevron-right" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Button Click="ShowVariables"
+                        Classes="primary"
+                        Width="80" HorizontalAlignment="Left" >
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-variable" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">Variables</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </TabItem.Header>
+                <ScrollViewer x:Name="variablesScrollViewer">
+                    <SelectableTextBlock
+                        x:Name="variablesRTB"
+                        FontFamily="Consolas"
+                        FontSize="10"
+                        Foreground="Gainsboro"
+                        Background="#161616"
+                        Padding="5" />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Button Click="ShowHTML"
+                        Classes="warning"
+                        Width="70" HorizontalAlignment="Left" >
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-web" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">HTML</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </TabItem.Header>
+                <uc:HTMLViewer x:Name="htmlViewer" VerticalAlignment="Stretch" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

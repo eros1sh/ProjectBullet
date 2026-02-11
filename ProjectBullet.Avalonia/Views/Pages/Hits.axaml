@@ -1,0 +1,127 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Hits"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="780">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Click="DeleteSelected" Margin="0,5,5,5" Classes="danger" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Delete</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Click="DeleteDuplicates" Margin="0,5,5,5" Classes="danger" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Delete Duplicates</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Click="Purge" Margin="0,5,5,5" Classes="danger" ToolTip.Tip="Deletes all hits from the database.">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Purge</TextBlock>
+                </StackPanel>
+            </Button>
+            <TextBlock Text="Total hits:" VerticalAlignment="Center" Margin="5,0" />
+            <TextBlock Text="{Binding Total}" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <DataGrid
+            x:Name="hitsListView"
+            Grid.Row="1"
+            Foreground="{DynamicResource ForegroundMain}"
+            Background="Transparent"
+            ItemsSource="{Binding HitsCollection}"
+            SelectionMode="Extended"
+            BorderThickness="1"
+            IsReadOnly="True"
+            CanUserResizeColumns="True"
+            CanUserSortColumns="True">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="copyMenu" Header="Copy Selected">
+                        <MenuItem Header="Data" Click="CopySelected"/>
+                        <MenuItem Header="Proxy" Click="CopySelectedProxies"/>
+                        <MenuItem Header="Data with Capture" Click="CopySelectedWithCapture"/>
+                        <MenuItem Header="Data (Full)" Click="CopySelectedFull"/>
+                        <MenuItem Header="Custom"></MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="saveMenu" Header="Save Selected">
+                        <MenuItem Header="Data" Click="SaveSelected"/>
+                        <MenuItem Header="Data with Capture" Click="SaveSelectedWithCapture"/>
+                        <MenuItem Header="Data (Full)" Click="SaveSelectedFull"/>
+                        <MenuItem Header="Custom"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Select All" Click="SelectAll"/>
+                    <MenuItem Header="Send to Recheck" Click="SendToRecheck"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="150" />
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="80" />
+                <DataGridTextColumn Header="Config" Binding="{Binding ConfigName}" Width="100" />
+                <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="90" />
+                <DataGridTextColumn Header="Wordlist" Binding="{Binding WordlistName}" Width="100" />
+                <DataGridTextColumn Header="Proxy" Binding="{Binding Proxy}" Width="100" />
+                <DataGridTextColumn Header="Captured Data" Binding="{Binding CapturedData}" Width="*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Filters:" VerticalAlignment="Center" Margin="5,0" />
+            <TextBox
+                x:Name="filterTextbox"
+                Grid.Column="1"
+                Text="{Binding SearchString}"
+                Margin="10,5,5,5"
+                KeyDown="UpdateSearch"/>
+            <Button Classes="styled" Click="Search" Margin="0,5,5,5" Grid.Column="2" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-magnify" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Search Capture</TextBlock>
+                </StackPanel>
+            </Button>
+            <TextBlock
+                Grid.Column="3"
+                Text="Config:"
+                VerticalAlignment="Center"
+                Margin="5,0" />
+            <ComboBox
+                ItemsSource="{Binding ConfigNames}"
+                Grid.Column="4"
+                Margin="0,5"
+                SelectedItem="{Binding ConfigFilter}"/>
+            <TextBlock
+                Grid.Column="5"
+                Text="Type:"
+                VerticalAlignment="Center"
+                Margin="5,0" />
+            <ComboBox
+                ItemsSource="{Binding HitTypes}"
+                Grid.Column="6"
+                Margin="0,5"
+                SelectedItem="{Binding TypeFilter}"/>
+        </Grid>
+    </Grid>
+</UserControl>

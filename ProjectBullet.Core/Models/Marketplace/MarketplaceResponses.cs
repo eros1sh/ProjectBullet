@@ -11,7 +11,7 @@ public class MarketplaceUser
     [JsonPropertyName("username")]
     public string Username { get; set; } = string.Empty;
 
-    [JsonPropertyName("isRegistered")]
+    [JsonPropertyName("is_registered")]
     public bool IsRegistered { get; set; }
 }
 

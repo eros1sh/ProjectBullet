@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.ChoiceDialog"
+             MinWidth="300"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="20">
+        <StackPanel MaxWidth="600" HorizontalAlignment="Center">
+            <icons:Icon x:Name="iconElement"
+                Margin="0,20,0,0"
+                FontSize="50"
+                HorizontalAlignment="Center"
+                Foreground="Orange"
+                Value="mdi-alert" />
+
+            <TextBlock x:Name="titleText"
+                Margin="0,20,0,0"
+                FontSize="20"
+                Text="Choice"
+                TextWrapping="Wrap"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="Gainsboro" />
+
+            <TextBlock x:Name="messageText"
+                Margin="0,10,0,20"
+                FontSize="14"
+                Text="Choose"
+                TextWrapping="Wrap"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="Gainsboro" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Click="Yes" x:Name="yesButton"
+                    Margin="0,5,5,5" Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-check" FontSize="13" />
+                        <TextBlock x:Name="yesButtonText"
+                            VerticalAlignment="Center"
+                            Margin="5,0">Yes</TextBlock>
+                    </StackPanel>
+                </Button>
+
+                <Button Click="No" x:Name="noButton"
+                    Margin="0,5,5,5" Classes="danger">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-close" FontSize="13" />
+                        <TextBlock x:Name="noButtonText"
+                            VerticalAlignment="Center"
+                            Margin="5,0">No</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

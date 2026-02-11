@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             d:DesignHeight="550" d:DesignWidth="780"
+             x:Class="ProjectBullet.Avalonia.Views.Pages.Home">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" FontSize="24" TextWrapping="Wrap" Margin="0,0,0,15"
+                   Foreground="{DynamicResource ForegroundMain}">
+            Welcome to <Bold>ProjectBullet</Bold>
+        </TextBlock>
+
+        <!-- Stat Cards -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*" Margin="0,0,0,15">
+            <Border Grid.Column="0" Background="{DynamicResource BackgroundSecondary}"
+                    CornerRadius="5" Margin="0,0,8,0" Padding="15,10">
+                <StackPanel>
+                    <TextBlock Text="Total Hits" FontSize="12"
+                               Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"/>
+                    <TextBlock Text="{Binding TotalHits}" FontSize="28" FontWeight="Bold"
+                               Foreground="{DynamicResource ForegroundGood}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Background="{DynamicResource BackgroundSecondary}"
+                    CornerRadius="5" Margin="4,0" Padding="15,10">
+                <StackPanel>
+                    <TextBlock Text="Active Jobs" FontSize="12"
+                               Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"/>
+                    <TextBlock Text="{Binding ActiveJobs}" FontSize="28" FontWeight="Bold"
+                               Foreground="{DynamicResource ForegroundCustom}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Background="{DynamicResource BackgroundSecondary}"
+                    CornerRadius="5" Margin="4,0" Padding="15,10">
+                <StackPanel>
+                    <TextBlock Text="Total Configs" FontSize="12"
+                               Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"/>
+                    <TextBlock Text="{Binding TotalConfigs}" FontSize="28" FontWeight="Bold"
+                               Foreground="{DynamicResource ForegroundMain}"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="3" Background="{DynamicResource BackgroundSecondary}"
+                    CornerRadius="5" Margin="8,0,0,0" Padding="15,10">
+                <StackPanel>
+                    <TextBlock Text="Total Proxies" FontSize="12"
+                               Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"/>
+                    <TextBlock Text="{Binding TotalProxies}" FontSize="28" FontWeight="Bold"
+                               Foreground="{DynamicResource ForegroundMain}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Active Jobs Header -->
+        <TextBlock Grid.Row="2" Text="Active Jobs" FontSize="16" FontWeight="Bold"
+                   Foreground="{DynamicResource ForegroundMain}" Margin="0,0,0,5"/>
+
+        <!-- Active Jobs List -->
+        <DataGrid Grid.Row="3"
+                  Foreground="{DynamicResource ForegroundMain}"
+                  Background="Transparent"
+                  ItemsSource="{Binding ActiveJobsList}"
+                  BorderThickness="1"
+                  Margin="0,0,0,10"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None"
+                  CanUserReorderColumns="False"
+                  CanUserResizeColumns="True"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Config" Binding="{Binding ConfigName}" Width="200" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100" />
+                <DataGridTextColumn Header="Progress" Binding="{Binding Progress}" Width="100" />
+                <DataGridTextColumn Header="CPM" Binding="{Binding CPM}" Width="80" />
+                <DataGridTextColumn Header="Hits" Binding="{Binding Hits}" Width="80" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Quick Actions -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button x:Name="newJobButton" Click="NewJob"
+                    Margin="0,5,5,5" Classes="primary">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-plus" FontSize="16" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">New Job</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="importConfigButton" Click="ImportConfig"
+                    Margin="0,5,5,5" Classes="primary">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-folder-open" FontSize="16" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Import Config</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="checkProxiesButton" Click="CheckProxies"
+                    Margin="0,5,5,5" Classes="primary">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-key" FontSize="16" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Check Proxies</TextBlock>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="webUIButton" Click="ShowChangelog"
+                    Margin="0,5,5,5" Classes="styled">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-text-box-outline" FontSize="16" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Changelog</TextBlock>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="updateButton" Click="ShowUpdateConfirmation"
+                    Margin="0,5,5,5" Classes="warning"
+                    IsVisible="{Binding UpdateAvailable}">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-update" FontSize="16" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Update Available!</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- Announcement -->
+        <TextBlock Grid.Row="5" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,5"
+                   Opacity="0.7" Foreground="{DynamicResource ForegroundMain}"
+                   Text="{Binding Announcement}" />
+    </Grid>
+</UserControl>

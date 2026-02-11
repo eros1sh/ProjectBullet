@@ -1,0 +1,70 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.ConfigMetadata"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="780">
+
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Name" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBox Text="{Binding Name}" Width="250" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Author" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBox Text="{Binding Author}" Width="250" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Category" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBox Text="{Binding Category}" Width="250" />
+            </StackPanel>
+            <TextBlock
+                Margin="0,10"
+                Foreground="{DynamicResource ForegroundCustom}"
+                Text="Icon" />
+            <Image
+                Source="{Binding Icon}"
+                Width="150"
+                Height="150"
+                HorizontalAlignment="Left"
+                Margin="5,0,0,0"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock Text="Select a new image from disk" VerticalAlignment="Center" Margin="5,0"/>
+                <Button x:Name="openImageButton"
+                    Click="OpenIcon"
+                    Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-file" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Open</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBlock Text="or from a remote URL" VerticalAlignment="Center" Margin="5,0"/>
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="URL" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBox x:Name="urlTextbox"
+                         Grid.Column="1"
+                         Margin="10,0" />
+                <Button x:Name="downloadButton"
+                    Grid.Column="2"
+                    Click="DownloadIcon"
+                    Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-download" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Download</TextBlock>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

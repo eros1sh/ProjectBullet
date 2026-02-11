@@ -1,0 +1,176 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Configs"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      xmlns:uc="clr-namespace:ProjectBullet.Avalonia.Controls"
+      xmlns:converters="clr-namespace:ProjectBullet.Avalonia.Converters"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converters:BoolToColorConverter x:Key="BoolToFavoriteColor" True="#FFD700" False="#555555" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="150" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <TextBlock Text="Current Config:" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBlock Text="{Binding SelectedConfig.Name}" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1">
+                <TextBlock Text="Total Configs:" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBlock Text="{Binding Total}" VerticalAlignment="Center" Margin="5,0"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <Button x:Name="newButton" Click="Create" Margin="0,5,5,5" Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-plus" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">New</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="editButton" Click="Edit" Margin="0,5,5,5" Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-pencil" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Edit</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="saveButton" Click="Save" Margin="0,5,5,5" Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-content-save" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Save</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="deleteButton" Click="Delete" Margin="0,5,5,5" Classes="danger">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-close" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Delete</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBox x:Name="filterTextbox" Text="{Binding SearchString}" Margin="0,5,5,5" Width="150" KeyDown="UpdateSearch"/>
+                <Button Classes="styled" x:Name="searchButton" Click="Search" Margin="0,5,5,5">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-magnify" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Search</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                <Button Classes="primary" x:Name="exportEncryptedButton" Click="ExportEncrypted" Margin="0,5,5,5">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-lock" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Export .pbc</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Classes="primary" x:Name="importEncryptedButton" Click="ImportEncrypted" Margin="0,5,5,5">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-lock-open" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Import .pbc</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Classes="styled" x:Name="openFolderButton" Click="OpenFolder" Margin="0,5,5,5">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-folder" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Open Folder</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Classes="styled" x:Name="rescanButton" Click="Rescan" Margin="0,5,5,5">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-refresh" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Rescan</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Configs DataGrid -->
+        <DataGrid x:Name="configsDataGrid" Grid.Row="2"
+                  Foreground="{DynamicResource ForegroundMain}"
+                  Background="Transparent"
+                  ItemsSource="{Binding Path=ConfigsCollection}"
+                  SelectionMode="Extended"
+                  BorderThickness="1"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None"
+                  CanUserReorderColumns="False"
+                  CanUserResizeColumns="True"
+                  AutoGenerateColumns="False"
+                  SelectionChanged="ItemHovered"
+                  DoubleTapped="ListItemDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Path=Icon}" Width="24" Height="24" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="&#x2605;" FontSize="16" Cursor="Hand"
+                                       Foreground="{Binding IsFavorite, Converter={StaticResource BoolToFavoriteColor}}"
+                                       PointerPressed="ToggleFavorite"
+                                       ToolTip.Tip="Toggle Favorite"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" />
+                <DataGridTextColumn Header="Author" Binding="{Binding Path=Author}" />
+                <DataGridTextColumn Header="Category" Binding="{Binding Path=Category}" Width="100" />
+                <DataGridTextColumn Header="Proxies" Binding="{Binding Path=NeedsProxies}" />
+                <DataGridTextColumn Header="Remote" Binding="{Binding Path=IsRemote}" />
+                <DataGridTextColumn Header="Wordlists" Binding="{Binding Path=AllowedWordlistTypes}" />
+                <DataGridTextColumn Header="Creation Date" Binding="{Binding Path=CreationDate}" Width="150" />
+                <DataGridTextColumn Header="Last Modified" Binding="{Binding Path=LastModified}" Width="150" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <GridSplitter
+            ResizeDirection="Rows"
+            Grid.Row="3"
+            Height="5"
+            HorizontalAlignment="Stretch" />
+
+        <Grid Grid.Row="4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Margin="5,0" Text="Information provided by the author:" />
+                <uc:MarkdownViewer
+                    MarkdownText="{Binding HoveredConfig.Readme}"
+                    Grid.Row="1"
+                    FontSize="12"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

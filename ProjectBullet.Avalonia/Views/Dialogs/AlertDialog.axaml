@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.AlertDialog"
+             MinWidth="300"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="20">
+        <StackPanel MaxWidth="600" HorizontalAlignment="Center">
+            <icons:Icon x:Name="icon"
+                Margin="0,20,0,0"
+                FontSize="50"
+                HorizontalAlignment="Center"
+                Foreground="YellowGreen"
+                Value="mdi-check-circle" />
+
+            <TextBlock x:Name="titleText"
+                Margin="0,20,0,0"
+                FontSize="20"
+                Text="Success"
+                TextWrapping="Wrap"
+                HorizontalAlignment="Center"
+                TextAlignment="Center"
+                Foreground="Gainsboro" />
+
+            <TextBlock x:Name="messageText"
+                Margin="0,10,0,20"
+                FontSize="14"
+                Text="Success"
+                TextWrapping="Wrap"
+                HorizontalAlignment="Center"
+                TextAlignment="Center"
+                Foreground="Gainsboro" />
+
+            <Button Click="Ok" x:Name="okButton"
+                Width="50"
+                Margin="0,5,5,5"
+                Classes="success"
+                HorizontalAlignment="Center">
+                <TextBlock VerticalAlignment="Center">Ok</TextBlock>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>

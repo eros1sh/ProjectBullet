@@ -1,0 +1,116 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.OB2MigrationDialog"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="15">
+        <StackPanel Width="500">
+
+            <TextBlock Text="Select your OpenBullet 2 folder"
+                       FontSize="16" FontWeight="Bold"
+                       Foreground="Gainsboro"
+                       Margin="0 0 0 10"/>
+
+            <Grid Margin="0 0 0 5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="pathTextBox" Grid.Column="0"
+                         IsReadOnly="True" Height="30"
+                         VerticalContentAlignment="Center"
+                         Margin="0 0 5 0"/>
+                <Button Grid.Column="1" Click="Browse"
+                        Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-folder-open"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Browse</TextBlock>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <TextBlock x:Name="validationText"
+                       Text=""
+                       FontSize="12"
+                       Margin="0 0 0 10"/>
+
+            <Separator Opacity="0.5" Margin="0 5"/>
+
+            <Label FontWeight="Bold" Margin="0 5 0 5">Migration Options</Label>
+
+            <CheckBox x:Name="migrateConfigsCheckBox"
+                      Content="Configs (.opk files)"
+                      IsChecked="True"
+                      VerticalContentAlignment="Center"
+                      Margin="5 2"/>
+            <CheckBox x:Name="migrateProxiesCheckBox"
+                      Content="Proxy Groups &amp; Proxies"
+                      IsChecked="True"
+                      VerticalContentAlignment="Center"
+                      Margin="5 2"/>
+            <CheckBox x:Name="migrateWordlistsCheckBox"
+                      Content="Wordlists"
+                      IsChecked="True"
+                      VerticalContentAlignment="Center"
+                      Margin="5 2"/>
+            <CheckBox x:Name="migrateJobsCheckBox"
+                      Content="Jobs"
+                      IsChecked="True"
+                      VerticalContentAlignment="Center"
+                      Margin="5 2"/>
+            <CheckBox x:Name="migrateHitsCheckBox"
+                      Content="Hits &amp; Records"
+                      IsChecked="True"
+                      VerticalContentAlignment="Center"
+                      Margin="5 2"/>
+
+            <Separator Opacity="0.5" Margin="0 10"/>
+
+            <Button x:Name="startButton" Click="StartMigration"
+                    Classes="primary"
+                    IsEnabled="False"
+                    HorizontalAlignment="Left"
+                    Margin="0 5">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-swap-horizontal"/>
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Start Migration</TextBlock>
+                </StackPanel>
+            </Button>
+
+            <ProgressBar x:Name="progressBar"
+                         Height="20"
+                         Minimum="0" Maximum="100"
+                         Value="0"
+                         Margin="0 10 0 5"
+                         IsVisible="False"/>
+
+            <TextBlock x:Name="statusText"
+                       Text=""
+                       Foreground="Gainsboro"
+                       FontSize="12"
+                       Margin="0 0 0 5"/>
+
+            <TextBlock x:Name="resultText"
+                       Text=""
+                       Foreground="Gainsboro"
+                       FontSize="12"
+                       TextWrapping="Wrap"
+                       Margin="0 5 0 5"
+                       IsVisible="False"/>
+
+            <Button x:Name="closeButton" Click="CloseDialog"
+                    Classes="danger"
+                    HorizontalAlignment="Left"
+                    IsVisible="False"
+                    Margin="0 5">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close"/>
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Close</TextBlock>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+    </Border>
+
+</UserControl>

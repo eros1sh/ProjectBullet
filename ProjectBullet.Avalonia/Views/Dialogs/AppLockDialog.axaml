@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.AppLockDialog"
+             MinWidth="350"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="20">
+        <StackPanel
+            MaxWidth="400"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+
+            <icons:Icon Value="mdi-lock"
+                FontSize="48"
+                HorizontalAlignment="Center"
+                Foreground="Gold"
+                Margin="0 0 0 15" />
+
+            <TextBlock
+                Text="ProjectBullet is locked"
+                FontSize="16"
+                FontWeight="Bold"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="Gainsboro"
+                Margin="0 0 0 5" />
+
+            <TextBlock
+                Text="Enter your password to unlock:"
+                FontSize="13"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="#888888"
+                Margin="0 0 0 15" />
+
+            <TextBox
+                x:Name="passwordBox"
+                PasswordChar="*"
+                Width="250"
+                Margin="0 0 0 5" />
+
+            <TextBlock
+                x:Name="errorText"
+                Text=""
+                Foreground="Red"
+                FontSize="12"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Margin="0 0 0 10" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Click="Unlock"
+                    Margin="0 5 5 5" Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-lock-open" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Unlock</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Exit"
+                    Margin="0 5 5 5" Classes="danger">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-close" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Exit</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+        </StackPanel>
+    </Border>
+
+</UserControl>

@@ -351,6 +351,9 @@ nul
 # Claude Code
 .claude/
 
+# PHP Backend (private)
+ProjectBullet.php/
+
 # SQLite databases
 *.db
 *.db-shm

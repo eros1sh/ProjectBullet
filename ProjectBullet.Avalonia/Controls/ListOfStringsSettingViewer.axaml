@@ -1,0 +1,130 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.ListOfStringsSettingViewer"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             d:DesignHeight="60" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label
+            Margin="0 5 0 0"
+            Content="{Binding Name}"
+            ToolTip.Tip="{Binding Description}"
+            VerticalAlignment="Top"
+            Grid.Column="0" />
+
+        <TabControl x:Name="tabControl" Grid.Column="1" Background="Transparent">
+            <TabControl.ItemContainerTheme>
+                <ControlTheme TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+                    <Setter Property="IsVisible" Value="False"/>
+                </ControlTheme>
+            </TabControl.ItemContainerTheme>
+            <TabItem>
+                <AutoCompleteBox
+                    Background="#112"
+                    Height="30"
+                    ItemsSource="{Binding Suggestions}"
+                    FilterMode="Contains"
+                    Text="{Binding VariableName}" />
+            </TabItem>
+            <TabItem>
+                <TextBox
+                    Background="#111"
+                    Height="100"
+                    FontFamily="Consolas"
+                    VerticalContentAlignment="Top"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    Text="{Binding Value}"/>
+            </TabItem>
+            <TabItem>
+                <TextBox
+                    Background="#121"
+                    Height="100"
+                    VerticalContentAlignment="Top"
+                    FontFamily="Consolas"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    Text="{Binding InterpValue}"/>
+            </TabItem>
+        </TabControl>
+
+        <TabControl x:Name="buttonTabControl" Grid.Column="2" Height="40" VerticalAlignment="Top" Background="Transparent">
+            <TabControl.ItemContainerTheme>
+                <ControlTheme TargetType="TabItem" BasedOn="{StaticResource {x:Type TabItem}}">
+                    <Setter Property="IsVisible" Value="False"/>
+                </ControlTheme>
+            </TabControl.ItemContainerTheme>
+            <TabItem>
+                <!-- Variable -> Constant -->
+                <Button Click="ConstantMode"
+                     Width="30"
+                     Height="30"
+                     ToolTip.Tip="Switch to constant mode"
+                     Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="9">VAR</TextBlock>
+                    </StackPanel>
+                </Button>
+            </TabItem>
+            <TabItem>
+                <!-- Constant -> Interpolated -->
+                <Button Click="InterpMode"
+                     Width="30"
+                     Height="30"
+                     ToolTip.Tip="Switch to interpolated mode"
+                     Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-format-text" Width="15" Height="15" />
+                    </StackPanel>
+                </Button>
+            </TabItem>
+            <TabItem>
+                <!-- Interpolated -> Variable -->
+                <Button Click="VariableMode"
+                     Width="30"
+                     Height="30"
+                     ToolTip.Tip="Switch to variable mode"
+                     Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-code-tags" Width="15" Height="15"/>
+                    </StackPanel>
+                </Button>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel
+            IsVisible="{Binding CanSwitchToInterpolatedMode}"
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="0 0 0 5"
+            Orientation="Horizontal">
+            <TextBlock>
+                This setting contains the '&lt;' and '&gt;' characters, do you want to&#160;
+            </TextBlock>
+            <TextBlock
+                Cursor="Hand"
+                TextDecorations="Underline"
+                PointerPressed="SwitchToInterpolatedMode"
+                Foreground="{DynamicResource ForegroundCustom}">
+                switch to interpolated mode?
+            </TextBlock>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

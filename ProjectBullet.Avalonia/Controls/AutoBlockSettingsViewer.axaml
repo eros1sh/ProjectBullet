@@ -1,0 +1,87 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.AutoBlockSettingsViewer"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <StackPanel
+        Margin="5 0"
+        HorizontalAlignment="Stretch">
+        <TextBlock
+            Text="{Binding NameAndId}"
+            FontSize="12"
+            FontWeight="Bold"
+            Margin="5 0 0 0"
+            TextWrapping="Wrap"
+            Foreground="#fec34d"/>
+        <TextBlock
+            Text="{Binding Block.Descriptor.Description}"
+            FontSize="12"
+            FontStyle="Italic"
+            Margin="5 5 0 0"
+            TextWrapping="Wrap"
+            Foreground="#fec34d"/>
+        <TextBlock
+            Text="{Binding Block.Descriptor.ExtraInfo}"
+            FontSize="10"
+            FontStyle="Italic"
+            Margin="5 5 0 0"
+            TextWrapping="Wrap"
+            Foreground="#fec34d"/>
+        <DockPanel>
+            <Label
+                DockPanel.Dock="Left"
+                Foreground="{DynamicResource ForegroundCustom}"
+                Content="Label:" />
+            <TextBox
+                Text="{Binding Label}"
+                DockPanel.Dock="Left" />
+        </DockPanel>
+        <CheckBox
+            Margin="5"
+            Content="Safe mode (catch exceptions to data.ERROR)"
+            IsChecked="{Binding SafeMode}" />
+        <DockPanel
+            IsVisible="{Binding HasReturnValue}">
+            <Label
+                DockPanel.Dock="Left"
+                Foreground="{DynamicResource ForegroundCustom}"
+                Content="{Binding ReturnValueType}" />
+            <TextBox
+                Text="{Binding OutputVariable}"
+                DockPanel.Dock="Left" />
+        </DockPanel>
+        <CheckBox
+            Margin="5 5 0 0"
+            Content="Is Capture"
+            IsVisible="{Binding HasReturnValue}"
+            IsChecked="{Binding IsCapture}"/>
+        <Label
+            Content="Settings:"
+            Margin="0 5"
+            Foreground="{DynamicResource ForegroundCustom}" />
+        <StackPanel
+            x:Name="settingsPanel"
+            HorizontalAlignment="Stretch" />
+        <Label
+            IsVisible="{Binding HasActions}"
+            Content="Actions:"
+            Margin="0 5"
+            Foreground="{DynamicResource ForegroundCustom}" />
+        <WrapPanel
+            x:Name="actionsPanel"
+            HorizontalAlignment="Stretch" />
+        <Label
+            IsVisible="{Binding HasImages}"
+            Content="Images:"
+            Margin="0 5"
+            Foreground="{DynamicResource ForegroundCustom}" />
+        <StackPanel
+            x:Name="imagesPanel"
+            HorizontalAlignment="Stretch" />
+    </StackPanel>
+</UserControl>

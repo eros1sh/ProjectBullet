@@ -44,7 +44,9 @@ jobs:
 
     # Overwrite the contents of version.txt with $VERSION.$COMMIT_NUMBER
     - name: Append commit number to version.txt
-      run: echo "${{ env.VERSION }}.${{ env.COMMIT_NUMBER }}" > ProjectBullet.Native/version.txt
+      run: |
+        echo "${{ env.VERSION }}.${{ env.COMMIT_NUMBER }}" > ProjectBullet.Native/version.txt
+        echo "${{ env.VERSION }}.${{ env.COMMIT_NUMBER }}" > ProjectBullet.Avalonia/version.txt
 
     # Get the commit description
     - name: Get commit description
@@ -57,12 +59,15 @@ jobs:
     - name: Read version again
       run: echo "VERSION=$(head -n 1 ProjectBullet.Native/version.txt)" >> $GITHUB_ENV
 
-    # Build native client
+    # Setup .NET 9
     - name: Setup .NET 9
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
 
+    # ===========================================
+    # WPF Builds (Windows only)
+    # ===========================================
     - name: Build Native Client (win-x64)
       run: dotnet publish ProjectBullet.Native -c Release -r win-x64 --self-contained false -o ./build/native-win-x64
 
@@ -72,6 +77,30 @@ jobs:
     - name: Build Native Client (win-arm64)
       run: dotnet publish ProjectBullet.Native -c Release -r win-arm64 --self-contained false -o ./build/native-win-arm64
 
+    # ===========================================
+    # Avalonia Builds (Cross-Platform)
+    # ===========================================
+    - name: Build Avalonia Client (win-x64)
+      run: dotnet publish ProjectBullet.Avalonia -c Release -r win-x64 --self-contained false -o ./build/avalonia-win-x64
+
+    - name: Build Avalonia Client (win-arm64)
+      run: dotnet publish ProjectBullet.Avalonia -c Release -r win-arm64 --self-contained false -o ./build/avalonia-win-arm64
+
+    - name: Build Avalonia Client (linux-x64)
+      run: dotnet publish ProjectBullet.Avalonia -c Release -r linux-x64 --self-contained false -o ./build/avalonia-linux-x64
+
+    - name: Build Avalonia Client (linux-arm64)
+      run: dotnet publish ProjectBullet.Avalonia -c Release -r linux-arm64 --self-contained false -o ./build/avalonia-linux-arm64
+
+    - name: Build Avalonia Client (osx-x64)
+      run: dotnet publish ProjectBullet.Avalonia -c Release -r osx-x64 --self-contained false -o ./build/avalonia-osx-x64
+
+    - name: Build Avalonia Client (osx-arm64)
+      run: dotnet publish ProjectBullet.Avalonia -c Release -r osx-arm64 --self-contained false -o ./build/avalonia-osx-arm64
+
+    # ===========================================
+    # Updater Builds
+    # ===========================================
     - name: Build Native Updater (win-x64)
       run: dotnet publish ProjectBullet.Native.Updater -c Release -r win-x64 -o ./build/updater-win-x64
 
@@ -85,13 +114,31 @@ jobs:
     - name: Package release artifacts
       run: |
         mkdir -p .release
+
+        # WPF packages
         cd ./build/native-win-x64
         zip -r ../../.release/ProjectBullet.Native-win-x64.zip ./*
         cd ../native-win-x86
         zip -r ../../.release/ProjectBullet.Native-win-x86.zip ./*
         cd ../native-win-arm64
         zip -r ../../.release/ProjectBullet.Native-win-arm64.zip ./*
+
+        # Avalonia packages
+        cd ../avalonia-win-x64
+        zip -r ../../.release/ProjectBullet.Avalonia-win-x64.zip ./*
+        cd ../avalonia-win-arm64
+        zip -r ../../.release/ProjectBullet.Avalonia-win-arm64.zip ./*
+        cd ../avalonia-linux-x64
+        zip -r ../../.release/ProjectBullet.Avalonia-linux-x64.zip ./*
+        cd ../avalonia-linux-arm64
+        zip -r ../../.release/ProjectBullet.Avalonia-linux-arm64.zip ./*
+        cd ../avalonia-osx-x64
+        zip -r ../../.release/ProjectBullet.Avalonia-osx-x64.zip ./*
+        cd ../avalonia-osx-arm64
+        zip -r ../../.release/ProjectBullet.Avalonia-osx-arm64.zip ./*
         cd ../..
+
+        # Updater binaries
         cp ./build/updater-win-x64/ProjectBullet.Native.Updater.exe .release/pb-native-updater-win-x64.exe
         cp ./build/updater-win-x86/ProjectBullet.Native.Updater.exe .release/pb-native-updater-win-x86.exe
         cp ./build/updater-win-arm64/ProjectBullet.Native.Updater.exe .release/pb-native-updater-win-arm64.exe
@@ -115,3 +162,20 @@ jobs:
 
           ### Changelog
           ${{ env.COMMIT_DESCRIPTION }}
+
+          ### Cross-Platform Downloads (Avalonia UI)
+          | Platform | File |
+          |----------|------|
+          | Windows x64 | `ProjectBullet.Avalonia-win-x64.zip` |
+          | Windows ARM64 | `ProjectBullet.Avalonia-win-arm64.zip` |
+          | Linux x64 | `ProjectBullet.Avalonia-linux-x64.zip` |
+          | Linux ARM64 | `ProjectBullet.Avalonia-linux-arm64.zip` |
+          | macOS x64 (Intel) | `ProjectBullet.Avalonia-osx-x64.zip` |
+          | macOS ARM64 (Apple Silicon) | `ProjectBullet.Avalonia-osx-arm64.zip` |
+
+          ### Windows Only Downloads (WPF)
+          | Platform | File |
+          |----------|------|
+          | Windows x64 | `ProjectBullet.Native-win-x64.zip` |
+          | Windows x86 | `ProjectBullet.Native-win-x86.zip` |
+          | Windows ARM64 | `ProjectBullet.Native-win-arm64.zip` |

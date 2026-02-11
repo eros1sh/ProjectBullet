@@ -1,0 +1,38 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.TimeSpanPicker"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="30" d:DesignWidth="800">
+    <StackPanel Orientation="Horizontal">
+        <NumericUpDown Minimum="0"
+                          Maximum="1000"
+                          Increment="1"
+                          ShowButtonSpinner="False"
+                          x:Name="hours"
+                          Value="0"
+                          ValueChanged="NumberChanged"
+                          Width="50"/>
+        <Label Content="hours" />
+        <NumericUpDown Minimum="0"
+                          Maximum="60"
+                          Increment="1"
+                          ShowButtonSpinner="False"
+                          x:Name="minutes"
+                          Value="0"
+                          ValueChanged="NumberChanged"
+                          Width="50"/>
+        <Label Content="minutes" />
+        <NumericUpDown Minimum="0"
+                          Maximum="60"
+                          Increment="1"
+                          ShowButtonSpinner="False"
+                          x:Name="seconds"
+                          Value="0"
+                          ValueChanged="NumberChanged"
+                          Width="50"/>
+        <Label Content="seconds" />
+    </StackPanel>
+</UserControl>

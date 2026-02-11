@@ -1,0 +1,56 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Plugins"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="780">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button x:Name="addPluginButton" Click="AddPlugin" Margin="0,5,5,5" Classes="success" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-plus" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Add Plugin</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <ItemsControl x:Name="pluginsControl" ItemsSource="{Binding PluginsCollection}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" Margin="0,10"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="5" BorderThickness="1" BorderBrush="{DynamicResource ForegroundMain}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Name}" Margin="5,0" />
+
+                                <Button x:Name="removePluginButton" Tag="{Binding}" Grid.Column="1" Click="RemovePlugin" Margin="0,5,5,5" Classes="danger" >
+                                    <StackPanel Orientation="Horizontal">
+                                        <icons:Icon Value="mdi-close" />
+                                        <TextBlock VerticalAlignment="Center" Margin="5,0">Remove</TextBlock>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

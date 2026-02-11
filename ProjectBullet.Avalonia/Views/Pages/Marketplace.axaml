@@ -1,0 +1,123 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Marketplace"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,5">
+            <TextBlock FontSize="24" FontWeight="Bold" DockPanel.Dock="Left" VerticalAlignment="Center">Marketplace</TextBlock>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Username}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <Button Classes="success" Click="BrowserLogin" Margin="0,0,5,0"
+                        IsVisible="{Binding IsRegisteredUser}">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-lock-open" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Browser Login</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="loginLogoutButton" Classes="primary" Click="LoginLogout" Margin="0,0,5,0">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-account" />
+                        <TextBlock x:Name="loginLogoutText" VerticalAlignment="Center" Margin="5,0" Text="{Binding LoginButtonText}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Filter bar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
+            <TextBlock VerticalAlignment="Center" Margin="5,0">Category</TextBlock>
+            <ComboBox x:Name="categoryCombo" Width="120" Margin="0,0,10,0" SelectionChanged="CategoryChanged">
+                <ComboBoxItem Content="all" IsSelected="True" />
+                <ComboBoxItem Content="config" />
+                <ComboBoxItem Content="plugin" />
+            </ComboBox>
+            <TextBlock VerticalAlignment="Center" Margin="5,0">Sort</TextBlock>
+            <ComboBox x:Name="sortCombo" Width="120" Margin="0,0,10,0" SelectionChanged="SortChanged">
+                <ComboBoxItem Content="newest" IsSelected="True" />
+                <ComboBoxItem Content="oldest" />
+                <ComboBoxItem Content="downloads" />
+                <ComboBoxItem Content="name" />
+            </ComboBox>
+            <TextBox x:Name="searchBox" Text="{Binding SearchString}"
+                     Width="250" Margin="0,0,5,0" KeyDown="SearchBoxKeyDown" />
+            <Button Classes="primary" Click="Search" Margin="0,0,5,0">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-magnify" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Search</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Classes="success" Click="Refresh">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-refresh" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Refresh</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- Items list -->
+        <DataGrid x:Name="itemsListView" Grid.Row="2"
+                  ItemsSource="{Binding Items}"
+                  Foreground="{DynamicResource ForegroundMain}"
+                  Background="Transparent"
+                  BorderThickness="1"
+                  IsReadOnly="True"
+                  CanUserResizeColumns="True"
+                  CanUserSortColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150" />
+                <DataGridTextColumn Header="Author" Binding="{Binding Author}" Width="110" />
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="80" />
+                <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="70" />
+                <DataGridTextColumn Header="Downloads" Binding="{Binding Downloads}" Width="80" />
+                <DataGridTextColumn Header="Updated" Binding="{Binding UpdatedAtDisplay}" Width="90" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Footer -->
+        <DockPanel Grid.Row="3" Margin="0,5,0,0">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                <Button Classes="primary" Click="PrevPage" Margin="0,0,5,0">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-chevron-left" />
+                        <TextBlock VerticalAlignment="Center" Margin="3,0">Prev</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBlock Text="{Binding PageInfo}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <Button Classes="primary" Click="NextPage" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Margin="3,0">Next</TextBlock>
+                        <icons:Icon Value="mdi-chevron-right" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <Button x:Name="updateButton" Classes="warning" Click="UpdateItem" Margin="0,0,5,0" IsVisible="False">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-cloud-upload" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Update</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Classes="success" Click="Download" Margin="0,0,5,0">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-cloud-download" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Download</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" />
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,215 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Jobs"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      xmlns:vms="clr-namespace:ProjectBullet.Avalonia.ViewModels"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Orientation="Horizontal"
+            Margin="0,5"
+            Grid.Row="0">
+            <Button Click="NewJob" Margin="0,0,5,0"
+                        Classes="success"
+                        Width="70" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-plus" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">New</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Click="RemoveAll"
+                        Classes="danger"
+                        Width="100" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Remove All</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <ItemsControl
+            ItemsSource="{Binding JobsCollection}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type vms:MultiRunJobViewModel}">
+                        <Border
+                            Margin="0,0,0,3"
+                            BorderThickness="1"
+                            BorderBrush="#2A2A2A" CornerRadius="4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid
+                                    Grid.Column="0"
+                                    Background="{DynamicResource BackgroundSecondary}"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Left">
+                                    <TextBlock
+                                        FontWeight="Bold"
+                                        FontSize="16"
+                                        VerticalAlignment="Center"
+                                        Margin="5"
+                                        Text="{Binding IdAndStatus}" />
+                                </Grid>
+
+                                <WrapPanel
+                                    Cursor="Hand"
+                                    Tag="{Binding}"
+                                    PointerPressed="ViewJob"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1">
+                                    <TextBlock FontWeight="Bold" Text="Config:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding ConfigName}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Data pool:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding DataPoolInfo}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Bots:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding Bots}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Proxies:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding ProxyMode}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Hits:" Foreground="{DynamicResource ForegroundGood}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding DataHits}" Foreground="{DynamicResource ForegroundGood}" VerticalAlignment="Center" Margin="5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Custom:" Foreground="{DynamicResource ForegroundCustom}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding DataCustom}" Foreground="{DynamicResource ForegroundCustom}" VerticalAlignment="Center" Margin="5,0" />
+                                    <TextBlock FontWeight="Bold" Text="ToCheck:" Foreground="{DynamicResource ForegroundToCheck}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding DataToCheck}" Foreground="{DynamicResource ForegroundToCheck}" VerticalAlignment="Center" Margin="5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Progress:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding ProgressString}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="CPM:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding CPM}" Margin="0,0,5,0" />
+                                </WrapPanel>
+
+                                <Button Tag="{Binding}" Grid.Column="2"
+                                        Click="EditJob" Margin="0,0,5,0"
+                                        ToolTip.Tip="Edit this job"
+                                        VerticalAlignment="Center"
+                                        Height="30"
+                                        Classes="primary">
+                                    <icons:Icon Value="mdi-pencil" />
+                                </Button>
+
+                                <Button Tag="{Binding}" Grid.Column="3"
+                                        Click="CloneJob" Margin="0,0,5,0"
+                                        ToolTip.Tip="Clone this job"
+                                        VerticalAlignment="Center"
+                                        Height="30"
+                                        Classes="primary">
+                                    <icons:Icon Value="mdi-content-copy" />
+                                </Button>
+
+                                <Button Tag="{Binding}" Grid.Column="4"
+                                        Click="RemoveJob"
+                                        ToolTip.Tip="Remove this job"
+                                        VerticalAlignment="Center"
+                                        Height="30"
+                                        Classes="danger">
+                                    <icons:Icon Value="mdi-close" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vms:ProxyCheckJobViewModel}">
+                        <Border
+                            Margin="0,0,0,3"
+                            BorderThickness="1"
+                            BorderBrush="#2A2A2A" CornerRadius="4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid
+                                    Grid.Column="0"
+                                    Background="{DynamicResource BackgroundSecondary}"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Left">
+                                    <TextBlock
+                                        FontWeight="Bold"
+                                        FontSize="16"
+                                        VerticalAlignment="Center"
+                                        Margin="5"
+                                        Text="{Binding IdAndStatus}" />
+                                </Grid>
+
+                                <WrapPanel
+                                    Cursor="Hand"
+                                    Tag="{Binding}"
+                                    PointerPressed="ViewJob"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1">
+                                    <TextBlock FontWeight="Bold" Text="Bots:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding Bots}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Working:" Foreground="{DynamicResource ForegroundGood}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding Working}" Foreground="{DynamicResource ForegroundGood}" VerticalAlignment="Center" Margin="5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Not working:" Foreground="{DynamicResource ForegroundBad}" VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding NotWorking}" Foreground="{DynamicResource ForegroundBad}" VerticalAlignment="Center" Margin="5,0" />
+                                    <TextBlock FontWeight="Bold" Text="Progress:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding ProgressString}" Margin="0,0,5,0" />
+                                    <TextBlock FontWeight="Bold" Text="CPM:" Margin="0,0,5,0" />
+                                    <TextBlock Text="{Binding CPM}" Margin="0,0,5,0" />
+                                </WrapPanel>
+
+                                <Button Tag="{Binding}" Grid.Column="2"
+                                        Click="EditJob" Margin="0,0,5,0"
+                                        ToolTip.Tip="Edit this job"
+                                        VerticalAlignment="Center"
+                                        Height="30"
+                                        Classes="primary">
+                                    <icons:Icon Value="mdi-pencil" />
+                                </Button>
+
+                                <Button Tag="{Binding}" Grid.Column="3"
+                                        Click="CloneJob" Margin="0,0,5,0"
+                                        ToolTip.Tip="Clone this job"
+                                        VerticalAlignment="Center"
+                                        Height="30"
+                                        Classes="primary">
+                                    <icons:Icon Value="mdi-content-copy" />
+                                </Button>
+
+                                <Button Tag="{Binding}" Grid.Column="4"
+                                        Click="RemoveJob"
+                                        ToolTip.Tip="Remove this job"
+                                        VerticalAlignment="Center"
+                                        Height="30"
+                                        Classes="danger">
+                                    <icons:Icon Value="mdi-close" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.DataTemplates>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

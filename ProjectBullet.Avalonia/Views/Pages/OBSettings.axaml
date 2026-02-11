@@ -1,0 +1,492 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.OBSettings"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="1550" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Row="0" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,0,10">
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">General</TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">On config edit, navigate to</TextBlock>
+                    <ComboBox x:Name="configSectionOnLoadCombobox"
+                              SelectedItem="{Binding Path=ConfigSectionOnLoad}"
+                              Width="150"
+                              HorizontalAlignment="Left"/>
+                </StackPanel>
+                <CheckBox Content="Automatically set Recommended Bots"
+                          IsChecked="{Binding AutoSetRecommendedBots}"
+                          Margin="5,0,0,0"/>
+                <CheckBox Content="View warning when config is not saved and you try to close the program or edit another config"
+                          IsChecked="{Binding WarnConfigNotSaved}"
+                          Margin="5,10,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Default author for new configs</TextBlock>
+                    <TextBox Text="{Binding DefaultAuthor}"
+                             Width="250"></TextBox>
+                </StackPanel>
+                <CheckBox Content="Enable logging in the job viewer page"
+                          IsChecked="{Binding EnableJobLogging}"
+                          Margin="5,10,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Number of messages to keep in the job log (when enabled)</TextBlock>
+                    <NumericUpDown Minimum="20"
+                          Maximum="10000"
+                          Increment="1"
+                          Value="{Binding LogBufferSize}"
+                          Width="150"/>
+                </StackPanel>
+                <CheckBox Content="Group captures in debugger"
+                          IsChecked="{Binding GroupCapturesInDebugger}"
+                          Margin="5,10,0,0"/>
+                <CheckBox Content="Ignore the wordlist name when removing duplicates from hits"
+                          IsChecked="{Binding IgnoreWordlistNameOnHitsDedupe}"
+                          Margin="5,10,0,0"/>
+                <CheckBox Content="Automatically update when a new version is available (user data is preserved)"
+                          IsChecked="{Binding AutoUpdate}"
+                          Margin="5,10,0,0"/>
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,10,0,0">Proxy check targets</TextBlock>
+                <Button x:Name="addProxyCheckTargetButton" Click="AddProxyCheckTarget" Margin="5,5,5,5"
+                        Classes="success"
+                        Width="70" HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-plus" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Add</TextBlock>
+                    </StackPanel>
+                </Button>
+                <ItemsControl x:Name="proxyCheckTargetsControl" ItemsSource="{Binding ProxyCheckTargetsCollection}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="0,5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Url" Margin="5,0" />
+                                    <TextBox Grid.Column="1" Text="{Binding Url}" Height="30" Margin="5,0" />
+                                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="Success Key" Margin="5,0" />
+                                    <TextBox Grid.Column="3" Text="{Binding SuccessKey}" Height="30" Margin="5,0" />
+                                    <Button x:Name="removeProxyCheckTargetButton" Tag="{Binding}" Grid.Column="4"
+                                            Click="RemoveProxyCheckTarget" Margin="0,0,5,0" Classes="danger" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <icons:Icon Value="mdi-close" />
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,5,0,0">Custom editor snippets (requires restart)</TextBlock>
+                <Button Click="AddCustomSnippet" Margin="5,5,5,5"
+                        Classes="success"
+                        Width="70" HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-plus" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Add</TextBlock>
+                    </StackPanel>
+                </Button>
+                <ItemsControl ItemsSource="{Binding CustomSnippetsCollection}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="0,5">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="100" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Name" Margin="5,0" />
+                                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Height="30" Margin="5,5" />
+                                    <Button Tag="{Binding}" Grid.Row="0" Grid.Column="2"
+                                            Click="RemoveCustomSnippet" Margin="0,5,5,5" Classes="danger" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <icons:Icon Value="mdi-close" />
+                                        </StackPanel>
+                                    </Button>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Description" Margin="5,0" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding Description}" Height="30" Margin="5,0" />
+                                    <TextBox Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="0" FontFamily="Consolas" AcceptsReturn="True" Text="{Binding Body}" Margin="5" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Separator Opacity="0.5" Margin="5,20"></Separator>
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">Remote</TextBlock>
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,0,0,0">Remote configs endpoints</TextBlock>
+                <Button x:Name="addRemoteConfigsEndpointButton" Click="AddRemoteConfigsEndpoint" Margin="5,5,5,5"
+                        Classes="success"
+                        Width="70" HorizontalAlignment="Left" >
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-plus" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Add</TextBlock>
+                    </StackPanel>
+                </Button>
+                <ItemsControl x:Name="remoteConfigsEndpointsControl"
+                              ItemsSource="{Binding RemoteConfigsEndpointsCollection}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="0,5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Url" Margin="5,0" />
+                                    <TextBox Grid.Column="1" Text="{Binding Url}" Height="30" Margin="5,0" />
+                                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="Api Key" Margin="5,0" />
+                                    <TextBox Grid.Column="3" Text="{Binding ApiKey}" Height="30" Margin="5,0" />
+                                    <Button x:Name="removeRemoteConfigsEndpointButton" Tag="{Binding}" Grid.Column="4"
+                                            Click="RemoveRemoteConfigsEndpoint" Margin="0,0,5,0" Classes="danger" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <icons:Icon Value="mdi-close" />
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Separator Opacity="0.5" Margin="5,20"></Separator>
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">Telegram Integration</TextBlock>
+                <CheckBox Content="Enable Telegram Bot"
+                          IsChecked="{Binding TelegramEnabled}"
+                          Margin="5,0,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Bot Token</TextBlock>
+                    <TextBox Text="{Binding TelegramBotToken}"
+                             Width="400"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Chat ID</TextBlock>
+                    <NumericUpDown Minimum="0"
+                          Maximum="9999999999"
+                          Increment="1"
+                          Value="{Binding TelegramChatId}"
+                          Width="200"/>
+                </StackPanel>
+                <CheckBox Content="Send hit notifications"
+                          IsChecked="{Binding TelegramSendHitNotifications}"
+                          Margin="5,10,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Whitelisted User IDs (comma-separated, leave empty to allow all)</TextBlock>
+                </StackPanel>
+                <TextBox Text="{Binding TelegramWhitelistedUserIds}"
+                         Width="400" HorizontalAlignment="Left" Margin="5,5,0,0"/>
+                <CheckBox Content="Enable job start/stop notifications"
+                          IsChecked="{Binding TelegramEnableJobStartStopNotifications}"
+                          Margin="5,10,0,0"/>
+                <CheckBox Content="Enhanced hit format (includes proxy, timestamp)"
+                          IsChecked="{Binding TelegramEnhancedHitFormat}"
+                          Margin="5,10,0,0"/>
+                <CheckBox Content="Enable daily summary"
+                          IsChecked="{Binding TelegramEnableDailySummary}"
+                          Margin="5,10,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Daily summary time (HH:mm)</TextBlock>
+                    <TextBox Text="{Binding TelegramDailySummaryTime}"
+                             Width="100"/>
+                </StackPanel>
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,15,0,0">Webhook Relay</TextBlock>
+                <TextBlock TextWrapping="Wrap" Margin="5,0,0,5" Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"
+                           Text="Use webhook relay to receive Telegram updates through the server. This is useful if you don't have a static IP. Click Setup to register your bot token with the relay server."/>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Button Classes="success" Click="SetupWebhook" Margin="5,0,5,0">
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-key" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">Setup Webhook Relay</TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="danger" Click="DeleteWebhook" Margin="5,0,5,0"
+                            IsVisible="{Binding WebhookRelayActive}">
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-delete" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">Remove Webhook</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0"
+                            IsVisible="{Binding WebhookRelayActive}">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Webhook URL</TextBlock>
+                    <TextBox Text="{Binding TelegramWebhookUrl, Mode=OneWay}"
+                             IsReadOnly="True" Width="400" />
+                    <Button Classes="primary" Click="CopyWebhookUrl" Margin="5,0,0,0"
+                            Content="Copy" />
+                </StackPanel>
+                <TextBlock Text="{Binding WebhookStatus}" Margin="5,5,0,0"
+                           Foreground="{DynamicResource ForegroundCustom}"/>
+                <Separator Opacity="0.5" Margin="5,20"></Separator>
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">App Lock</TextBlock>
+                <CheckBox Content="Enable App Lock (require password on startup)"
+                          IsChecked="{Binding AppLockEnabled}"
+                          Margin="5,0,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Classes="primary" Click="SetAppLockPassword" Margin="5,0,5,0">
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-lock" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">Set/Change Password</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Auto-lock after (minutes, 0 = disabled)</TextBlock>
+                    <NumericUpDown Minimum="0"
+                          Maximum="1440"
+                          Increment="1"
+                          Value="{Binding AppLockAutoLockMinutes}"
+                          Width="100"/>
+                </StackPanel>
+                <Separator Opacity="0.5" Margin="5,20"></Separator>
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">Marketplace</TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Marketplace Account:</TextBlock>
+                    <TextBlock Text="{Binding MarketplaceUsername}" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+                <Separator Opacity="0.5" Margin="5,20"/>
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">Migration</TextBlock>
+                <TextBlock TextWrapping="Wrap" Margin="5,0,0,5"
+                           Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"
+                           Text="Import your data from an existing OpenBullet 2 installation including configs, proxies, wordlists, jobs, and hits."/>
+                <Button Classes="primary" Click="OpenOB2Migration"
+                        HorizontalAlignment="Left" Margin="5,10,5,5">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-swap-horizontal"/>
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Migrate from OpenBullet 2</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Separator Opacity="0.5" Margin="5,20"></Separator>
+                <TextBlock FontSize="24" FontWeight="Bold" Margin="0,0,0,10">Customization</TextBlock>
+                <CheckBox Content="Play a sound when a hit is found"
+                          IsChecked="{Binding PlaySoundOnHit}"
+                          Margin="5,0,0,0"/>
+
+                <CheckBox Content="Enable Word Wrap in text editor"
+                          IsChecked="{Binding WordWrap}"
+                          Margin="5,10,0,0"/>
+
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,10,0,0">Background colors</TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Main</TextBlock>
+                        <TextBox Text="{Binding BackgroundMain}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Secondary</TextBlock>
+                        <TextBox Text="{Binding BackgroundSecondary}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Inputs</TextBlock>
+                        <TextBox Text="{Binding BackgroundInput}" Width="150" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,10,0,0">Foreground colors</TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Main</TextBlock>
+                        <TextBox Text="{Binding ForegroundMain}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Good</TextBlock>
+                        <TextBox Text="{Binding ForegroundGood}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Bad</TextBlock>
+                        <TextBox Text="{Binding ForegroundBad}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Custom</TextBlock>
+                        <TextBox Text="{Binding ForegroundCustom}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Retry</TextBlock>
+                        <TextBox Text="{Binding ForegroundRetry}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Banned</TextBlock>
+                        <TextBox Text="{Binding ForegroundBanned}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">To Check</TextBlock>
+                        <TextBox Text="{Binding ForegroundToCheck}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Menu Selected</TextBlock>
+                        <TextBox Text="{Binding ForegroundMenuSelected}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Inputs</TextBlock>
+                        <TextBox Text="{Binding ForegroundInput}" Width="150" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Foreground="{DynamicResource ForegroundCustom}" Margin="5,10,0,0">Button colors</TextBlock>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Success</TextBlock>
+                        <TextBox Text="{Binding SuccessButton}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Primary</TextBlock>
+                        <TextBox Text="{Binding PrimaryButton}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Warning</TextBlock>
+                        <TextBox Text="{Binding WarningButton}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Danger</TextBlock>
+                        <TextBox Text="{Binding DangerButton}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Foreground</TextBlock>
+                        <TextBox Text="{Binding ForegroundButton}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,5,0,0">
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Background</TextBlock>
+                        <TextBox Text="{Binding BackgroundButton}" Width="150" />
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Background image" Margin="5,0" />
+                    <TextBox Grid.Column="1" Text="{Binding BackgroundImagePath, Mode=OneWay}" IsReadOnly="True" />
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="Opacity" Margin="5,0" />
+                    <NumericUpDown
+                        Grid.Column="3"
+                        Minimum="0"
+                        Maximum="100"
+                        Increment="1"
+                        Value="{Binding BackgroundOpacity}"
+                        Width="150"/>
+                    <Button
+                        Grid.Column="4"
+                        Margin="5,0"
+                        Click="ChooseBackgroundImage"
+                        Classes="primary" >
+                        <StackPanel Orientation="Horizontal">
+                            <icons:Icon Value="mdi-file" />
+                            <TextBlock VerticalAlignment="Center" Margin="5,0">Choose</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <Image
+                    Source="{Binding BackgroundImage}"
+                    MaxWidth="150"
+                    MaxHeight="150"
+                    HorizontalAlignment="Left"
+                    IsVisible="{Binding ShowBackgroundImage}"
+                    Margin="5,5,0,0"/>
+                <Button
+                    Click="ResetCustomization"
+                    Width="130"
+                    Margin="5"
+                    HorizontalAlignment="Left"
+                    Classes="warning" >
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-refresh" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Reset customization</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Button x:Name="saveButton"
+                Grid.Row="1"
+                Grid.Column="0"
+                Click="Save"
+                Margin="0,5,5,5"
+                Classes="primary" >
+            <StackPanel Orientation="Horizontal">
+                <icons:Icon Value="mdi-content-save" />
+                <TextBlock VerticalAlignment="Center" Margin="5,0">Save</TextBlock>
+            </StackPanel>
+        </Button>
+
+        <Button Classes="danger"
+                x:Name="resetButton"
+                Grid.Row="1"
+                Grid.Column="1"
+                Click="Reset"
+                Margin="0,5,5,5" >
+            <StackPanel Orientation="Horizontal">
+                <icons:Icon Value="mdi-refresh" />
+                <TextBlock VerticalAlignment="Center" Margin="5,0">Reset</TextBlock>
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

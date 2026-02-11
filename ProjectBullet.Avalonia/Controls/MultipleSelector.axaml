@@ -1,0 +1,105 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.MultipleSelector"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             Height="200"
+             Width="460"
+             HorizontalAlignment="Left"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <Border
+                Grid.Column="0"
+                CornerRadius="10"
+                BorderThickness="3"
+                BorderBrush="YellowGreen">
+            <ScrollViewer
+                VerticalScrollBarVisibility="Auto">
+                <ItemsControl
+                    x:Name="selectedValuesControl">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderThickness="0 0 0 1"
+                                BorderBrush="DarkGray"
+                                Padding="1">
+                                <Label VerticalAlignment="Center"
+                                       Content="{Binding}"
+                                       PointerPressed="MoveItem"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel
+            Margin="10 0"
+            VerticalAlignment="Center"
+            Grid.Column="1">
+            <Button x:Name="rightButton"
+                    Click="MoveAllRight"
+                    Height="30"
+                    Width="30"
+                    Margin="0 10" Classes="primary" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-chevron-double-right"/>
+                </StackPanel>
+            </Button>
+            <Button x:Name="leftButton"
+                    Click="MoveAllLeft"
+                    Height="30"
+                    Width="30"
+                    Margin="0 10" Classes="primary" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-chevron-double-left"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Border
+                Grid.Column="2"
+                CornerRadius="10"
+                BorderThickness="3"
+                BorderBrush="Tomato">
+            <ScrollViewer
+                VerticalScrollBarVisibility="Auto">
+                <ItemsControl
+                    x:Name="notSelectedValuesControl" >
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderThickness="0 0 0 1"
+                                BorderBrush="DarkGray"
+                                Padding="1">
+                                <Label VerticalAlignment="Center"
+                                       Content="{Binding}"
+                                       PointerPressed="MoveItem"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+    </Grid>
+</UserControl>

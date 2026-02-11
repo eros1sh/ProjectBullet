@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.AddProxyGroupDialog">
+
+    <Grid Height="80" Width="250" Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.Styles>
+            <Style Selector="Label">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundMain}" />
+            </Style>
+        </Grid.Styles>
+
+        <Label Grid.Column="0" Grid.Row="0" Content="Name:" />
+        <TextBox x:Name="nameTextbox" Grid.Column="1" Grid.Row="0" Margin="5" />
+
+        <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" x:Name="acceptButton" Content="ACCEPT" Click="Accept" Classes="success" Margin="5"/>
+    </Grid>
+</UserControl>

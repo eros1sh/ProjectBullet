@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:uc="clr-namespace:ProjectBullet.Avalonia.Controls"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.ProxyCheckJobOptionsDialog">
+
+    <Border Padding="10">
+        <StackPanel>
+            <Label Content="Start condition" Foreground="{DynamicResource ForegroundCustom}" />
+            <StackPanel Orientation="Horizontal" Background="Transparent">
+                <RadioButton
+                Content="Start in"
+                x:Name="startInButton"
+                IsChecked="{Binding StartInMode}"
+                Background="Transparent"
+                Margin="5 0"/>
+                <RadioButton
+                Content="Start at"
+                x:Name="startAtButton"
+                IsChecked="{Binding StartAtMode}"
+                Background="Transparent"
+                Margin="5 0"/>
+            </StackPanel>
+
+            <TabControl x:Name="startConditionTabControl" Background="Transparent">
+                <TabControl.Styles>
+                    <Style Selector="TabItem">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </Style>
+                </TabControl.Styles>
+                <TabItem>
+                    <uc:TimeSpanPicker TimeSpan="{Binding StartIn, Mode=TwoWay}" />
+                </TabItem>
+                <TabItem>
+                    <StackPanel Orientation="Horizontal">
+                        <DatePicker
+                            Width="200"
+                            SelectedDate="{Binding StartAtTime, Mode=TwoWay}" />
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+
+            <Label Content="Settings"
+                   Margin="0 25 0 0"
+                   Foreground="{DynamicResource ForegroundCustom}" />
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                <Label>Bots</Label>
+                <NumericUpDown Minimum="1"
+                          Maximum="{Binding BotLimit}"
+                          Increment="1"
+                          Value="{Binding Bots}"
+                          Width="100"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                <Label>Timeout (milliseconds)</Label>
+                <NumericUpDown Minimum="0"
+                          Maximum="1000000"
+                          Increment="1000"
+                          Value="{Binding TimeoutMilliseconds}"
+                          Width="100"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                <Label>Proxy group</Label>
+                <ComboBox
+                    ItemsSource="{Binding ProxyGroupNames}"
+                    SelectedItem="{Binding ProxyGroup}" />
+            </StackPanel>
+            <CheckBox
+                Margin="5 5 0 0"
+                Content="Check only untested"
+                IsChecked="{Binding CheckOnlyUntested}" />
+            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                <Label>Check on website</Label>
+                <ComboBox
+                    ItemsSource="{Binding Targets}"
+                    SelectedItem="{Binding Target}" />
+            </StackPanel>
+
+            <Button Click="Accept"
+                Margin="0 10 0 0"
+                Classes="success"
+                HorizontalAlignment="Stretch" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-check" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Accept</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Border>
+
+</UserControl>

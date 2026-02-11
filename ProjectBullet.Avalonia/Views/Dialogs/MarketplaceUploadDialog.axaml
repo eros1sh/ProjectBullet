@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.MarketplaceUploadDialog"
+             MinWidth="440"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="20">
+        <StackPanel MaxWidth="440" HorizontalAlignment="Center">
+            <Label FontSize="16" FontWeight="Bold" Margin="0 0 0 10">Upload to Marketplace</Label>
+
+            <Label>Name</Label>
+            <TextBox x:Name="nameBox" Width="380" Margin="0 0 0 8" />
+
+            <Label>Category</Label>
+            <ComboBox x:Name="categoryCombo" Width="380" Margin="0 0 0 8" SelectedIndex="0">
+                <ComboBoxItem Content="config" />
+                <ComboBoxItem Content="plugin" />
+            </ComboBox>
+
+            <Label>Description</Label>
+            <TextBox x:Name="descriptionBox" Width="380" Height="60"
+                     TextWrapping="Wrap" AcceptsReturn="True"
+                     Margin="0 0 0 8" />
+
+            <Label>Version</Label>
+            <TextBox x:Name="versionBox" Width="380" Text="1.0.0" Margin="0 0 0 8" />
+
+            <Label>Password (optional, for .pbc files)</Label>
+            <TextBox x:Name="passwordBox" PasswordChar="*" Width="380" Margin="0 0 0 8" />
+
+            <Label>File</Label>
+            <DockPanel Width="380" Margin="0 0 0 8">
+                <Button DockPanel.Dock="Right" Click="BrowseFile"
+                        Classes="primary" Margin="5 0 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-file" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Browse</TextBlock>
+                    </StackPanel>
+                </Button>
+                <TextBox x:Name="filePathBox" IsReadOnly="True" />
+            </DockPanel>
+
+            <TextBlock x:Name="errorText" Text="" Foreground="Red" FontSize="12"
+                       TextAlignment="Center" HorizontalAlignment="Center"
+                       TextWrapping="Wrap" Margin="0 5 0 5" />
+
+            <Button Click="DoUpload" Classes="success"
+                    HorizontalAlignment="Center" Margin="0 5">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-cloud-upload" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Upload</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>

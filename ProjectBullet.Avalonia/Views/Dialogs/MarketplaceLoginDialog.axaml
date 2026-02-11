@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.MarketplaceLoginDialog"
+             MinWidth="380"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="20">
+        <StackPanel MaxWidth="400" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <TabControl x:Name="tabControl" Background="Transparent">
+                <!-- Login Tab -->
+                <TabItem Header="Login">
+                    <StackPanel Margin="0 15 0 0">
+                        <Label>Username</Label>
+                        <TextBox x:Name="loginUsername" Width="280" Margin="0 0 0 10" />
+                        <Label>Password</Label>
+                        <TextBox x:Name="loginPassword" PasswordChar="*" Width="280" Margin="0 0 0 10" />
+                        <Button Click="DoLogin" Classes="success"
+                                HorizontalAlignment="Center" Margin="0 5">
+                            <StackPanel Orientation="Horizontal">
+                                <icons:Icon Value="mdi-lock-open" />
+                                <TextBlock VerticalAlignment="Center" Margin="5 0">Login</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </TabItem>
+
+                <!-- Register Tab -->
+                <TabItem Header="Register">
+                    <StackPanel Margin="0 15 0 0">
+                        <Label>Username</Label>
+                        <TextBox x:Name="registerUsername" Width="280" Margin="0 0 0 10" />
+                        <Label>Password</Label>
+                        <TextBox x:Name="registerPassword" PasswordChar="*" Width="280" Margin="0 0 0 10" />
+                        <Label>Confirm Password</Label>
+                        <TextBox x:Name="registerConfirmPassword" PasswordChar="*" Width="280" Margin="0 0 0 10" />
+                        <Button Click="DoRegister" Classes="success"
+                                HorizontalAlignment="Center" Margin="0 5">
+                            <StackPanel Orientation="Horizontal">
+                                <icons:Icon Value="mdi-account-plus" />
+                                <TextBlock VerticalAlignment="Center" Margin="5 0">Register</TextBlock>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+
+            <TextBlock x:Name="errorText" Text="" Foreground="Red" FontSize="12"
+                       TextAlignment="Center" HorizontalAlignment="Center"
+                       TextWrapping="Wrap" Margin="0 10 0 0" />
+
+            <Button Click="Logout" Classes="warning"
+                    HorizontalAlignment="Center" Margin="0 5"
+                    x:Name="logoutButton">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-exit-to-app" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Logout</TextBlock>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+    </Border>
+</UserControl>

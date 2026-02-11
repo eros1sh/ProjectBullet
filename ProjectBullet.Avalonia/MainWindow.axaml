@@ -1,0 +1,146 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjectBullet.Avalonia"
+        xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d"
+        x:Class="ProjectBullet.Avalonia.MainWindow"
+        Title="ProjectBullet - 0.0.3 [Alpha]"
+        Width="800" Height="600"
+        Background="{DynamicResource BackgroundMain}"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Images/logohq_square_padded.png">
+
+    <Grid x:Name="Root" Margin="0">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="12" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="8" />
+        </Grid.RowDefinitions>
+
+        <!-- Top Menu -->
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel x:Name="topMenu" Margin="0,0,0,0" Grid.Column="0" Orientation="Horizontal" Spacing="0"
+                        VerticalAlignment="Center">
+                <TextBlock x:Name="menuOptionHome" Classes="menuItem" Text="Home" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenHomePage" />
+                <TextBlock x:Name="menuOptionJobs" Classes="menuItem" Text="Jobs" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenJobsPage" />
+                <TextBlock x:Name="menuOptionMonitor" Classes="menuItem" Text="Monitor" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenMonitorPage" />
+                <TextBlock x:Name="menuOptionProxies" Classes="menuItem" Text="Proxies" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenProxiesPage" />
+                <TextBlock x:Name="menuOptionWordlists" Classes="menuItem" Text="Wordlists" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenWordlistsPage" />
+
+                <StackPanel Orientation="Horizontal"
+                            PointerEntered="ConfigsMenuOptionMouseEnter"
+                            PointerExited="ConfigsMenuOptionMouseLeave">
+                    <TextBlock x:Name="menuOptionConfigs" Classes="menuItem" Text="Configs" FontWeight="SemiBold" Margin="0,0,2,0"
+                               FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                               PointerPressed="OpenConfigsPage" />
+                    <icons:Icon Value="fa-caret-down"
+                                FontSize="9"
+                                Foreground="{DynamicResource ForegroundMain}"
+                                VerticalAlignment="Center"
+                                Margin="0,0,6,0"
+                                Opacity="0.5"
+                                IsVisible="{Binding IsConfigSelected}" />
+                </StackPanel>
+
+                <TextBlock x:Name="menuOptionHits" Classes="menuItem" Text="Hits" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenHitsPage" />
+                <TextBlock x:Name="menuOptionPlugins" Classes="menuItem" Text="Plugins" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenPluginsPage" />
+                <TextBlock x:Name="menuOptionMarketplace" Classes="menuItem" Text="Marketplace" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenMarketplacePage" />
+                <TextBlock x:Name="menuOptionOBSettings" Classes="menuItem" Text="PB Settings" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenOBSettingsPage" />
+                <TextBlock x:Name="menuOptionRLSettings" Classes="menuItem" Text="RL Settings" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenRLSettingsPage" />
+                <TextBlock x:Name="menuOptionAbout" Classes="menuItem" Text="About" FontWeight="SemiBold" Margin="0,0,6,0"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="6,4"
+                           PointerPressed="OpenAboutPage" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                <Button x:Name="githubButton" Classes="styled"
+                        Click="OpenGitHub" Padding="5,3">
+                    <icons:Icon Value="fa-brands fa-github" FontSize="14" />
+                </Button>
+                <Button x:Name="telegramButton" Classes="styled"
+                        Click="OpenTelegram" Padding="5,3">
+                    <icons:Icon Value="fa-brands fa-telegram" FontSize="14" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Config Submenu -->
+        <Border
+            x:Name="configSubmenu"
+            Background="#1A1A1A"
+            BorderBrush="#2A2A2A"
+            BorderThickness="1"
+            CornerRadius="6"
+            Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+            Margin="300,32,0,0"
+            ZIndex="10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            IsVisible="False"
+            PointerEntered="ConfigSubmenuMouseEnter"
+            PointerExited="ConfigSubmenuMouseLeave"
+            Padding="4,6">
+            <StackPanel>
+                <TextBlock x:Name="menuOptionMetadata" Classes="menuItem" Text="Metadata" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenMetadataPage" />
+                <TextBlock x:Name="menuOptionReadme" Classes="menuItem" Text="Readme" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenReadmePage" />
+                <TextBlock x:Name="menuOptionStacker" Classes="menuItem" Text="Stacker" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenStackerPage" />
+                <TextBlock x:Name="menuOptionLoliCode" Classes="menuItem" Text="LoliCode" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenLoliCodePage" />
+                <TextBlock x:Name="menuOptionConfigSettings" Classes="menuItem" Text="Settings" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenConfigSettingsPage" />
+                <TextBlock x:Name="menuOptionCSharpCode" Classes="menuItem" Text="C# Code" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenCSharpCodePage" />
+                <TextBlock x:Name="menuOptionLoliScript" Classes="menuItem" Text="LoliScript" FontWeight="SemiBold" Margin="6,2"
+                           FontSize="13" VerticalAlignment="Center" Cursor="Hand" Padding="4,3"
+                           PointerPressed="OpenLoliScriptPage" />
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content Area (replaces WPF Frame) -->
+        <TransitioningContentControl Grid.Row="1" Grid.Column="1" x:Name="ContentArea" />
+    </Grid>
+
+</Window>

@@ -1,0 +1,55 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.ConfigReadme"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:uc="clr-namespace:ProjectBullet.Avalonia.Controls"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="780">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Grid.Row="0" Grid.Column="0"
+            Foreground="{DynamicResource ForegroundCustom}"
+            Text="Readme" Margin="5,0"/>
+
+        <TextBox x:Name="readmeTextBox"
+                 Background="{DynamicResource BackgroundSecondary}"
+                 Foreground="{DynamicResource ForegroundMain}"
+                 FontFamily="Consolas"
+                 VerticalAlignment="Stretch"
+                 Grid.Row="1" Grid.Column="0"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 TextChanged="ReadmeChanged" />
+
+        <GridSplitter
+            ResizeDirection="Columns"
+            Grid.Column="1"
+            Grid.RowSpan="2"
+            Width="5"
+            VerticalAlignment="Stretch" />
+
+        <TextBlock
+            Grid.Row="0" Grid.Column="2"
+            Foreground="{DynamicResource ForegroundCustom}"
+            Text="Preview (type something to update)" Margin="5,0"/>
+
+        <uc:MarkdownViewer
+            Grid.Row="1" Grid.Column="2"
+            VerticalAlignment="Stretch"
+            MarkdownText="{Binding Readme}" />
+    </Grid>
+</UserControl>

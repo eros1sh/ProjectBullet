@@ -1,0 +1,40 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.KeyViewer"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d"
+             d:DesignHeight="40" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Margin="-12 0 0 0" Grid.Column="0" x:Name="leftSetting" />
+
+        <ComboBox
+            Height="30"
+            Grid.Column="1"
+            ItemsSource="{Binding Comparisons}"
+            SelectedValue="{Binding Comparison}" />
+
+        <StackPanel Margin="-7 0 0 0" Grid.Column="2" x:Name="rightSetting" />
+
+        <Button Click="Delete"
+                Grid.Column="3"
+                Width="25"
+                Height="20"
+                ToolTip.Tip="Remove the key"
+                Classes="danger">
+            <StackPanel Orientation="Horizontal">
+                <icons:Icon Value="mdi-close" Width="10" Height="10" />
+            </StackPanel>
+        </Button>
+
+    </Grid>
+</UserControl>

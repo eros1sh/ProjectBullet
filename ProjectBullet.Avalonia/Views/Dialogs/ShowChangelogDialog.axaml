@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:uc="clr-namespace:ProjectBullet.Avalonia.Controls"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.ShowChangelogDialog">
+
+    <Grid>
+        <uc:MarkdownViewer
+            MaxWidth="800"
+            MaxHeight="600"
+            FontSize="14"
+            MarkdownText="{Binding Text}"/>
+    </Grid>
+</UserControl>

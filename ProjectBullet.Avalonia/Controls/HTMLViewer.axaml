@@ -1,0 +1,23 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Controls.HTMLViewer"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:ProjectBullet.Avalonia.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <!-- Placeholder for HTML content - WebBrowser is not available in Avalonia cross-platform -->
+        <ScrollViewer
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <TextBlock
+                x:Name="htmlTextBlock"
+                TextWrapping="Wrap"
+                Foreground="White"
+                FontFamily="Verdana"
+                Padding="10"
+                Background="#222" />
+        </ScrollViewer>
+    </Grid>
+</UserControl>

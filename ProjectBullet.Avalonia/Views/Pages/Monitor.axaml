@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="800"
+             x:Class="ProjectBullet.Avalonia.Views.Pages.Monitor">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Summary Cards Row -->
+        <WrapPanel Grid.Row="0" Margin="0,5,0,10" HorizontalAlignment="Left">
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL JOBS" FontSize="10" Foreground="{DynamicResource ForegroundMain}" Opacity="0.6"/>
+                    <TextBlock Text="{Binding TotalJobs}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundMain}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="RUNNING" FontSize="10" Foreground="{DynamicResource ForegroundGood}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding RunningJobs}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL HITS" FontSize="10" Foreground="{DynamicResource ForegroundGood}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding TotalHits}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="TESTED" FontSize="10" Foreground="{DynamicResource ForegroundMain}" Opacity="0.6"/>
+                    <TextBlock Text="{Binding TotalTested}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundMain}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="TOTAL CPM" FontSize="10" Foreground="{DynamicResource ForegroundCustom}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding TotalCPM}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundCustom}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="ERRORS" FontSize="10" Foreground="{DynamicResource ForegroundBad}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding TotalErrors}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="RAM" FontSize="10" Foreground="{DynamicResource ForegroundRetry}" Opacity="0.8"/>
+                    <TextBlock Text="{Binding MemoryUsage}" FontSize="22" FontWeight="Bold" Foreground="{DynamicResource ForegroundRetry}"/>
+                </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource BackgroundInput}" CornerRadius="5" Padding="15,8" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="HIT RATE" FontSize="10" Foreground="#FF9800" Opacity="0.8"/>
+                    <TextBlock Text="{Binding HitRate}" FontSize="22" FontWeight="Bold" Foreground="#FF9800"/>
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+
+        <!-- Overall Progress Bar -->
+        <Grid Grid.Row="1" Margin="0,0,0,8" IsVisible="{Binding ProgressBarVisible}">
+            <ProgressBar Height="20" Minimum="0" Maximum="100"
+                         Value="{Binding OverallProgressPercent, Mode=OneWay}"
+                         Background="{DynamicResource BackgroundInput}"
+                         Foreground="{DynamicResource ForegroundGood}" />
+            <TextBlock Text="{Binding OverallProgressText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource ForegroundMain}"/>
+        </Grid>
+
+        <!-- Section Title -->
+        <TextBlock Grid.Row="2" Text="Jobs" FontSize="16" FontWeight="Bold"
+                   Foreground="{DynamicResource ForegroundMain}" Margin="0,0,0,5"/>
+
+        <!-- Per-Job Table -->
+        <DataGrid Grid.Row="3"
+                  ItemsSource="{Binding JobItems}"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  Foreground="{DynamicResource ForegroundMain}"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="40" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="Status" Width="75" Binding="{Binding Status}"/>
+                <DataGridTextColumn Header="Config" Width="140" Binding="{Binding ConfigName}"/>
+                <DataGridTextColumn Header="Bots" Width="45" Binding="{Binding Bots}"/>
+                <DataGridTextColumn Header="Tested" Width="65" Binding="{Binding Tested}"/>
+                <DataGridTextColumn Header="Hits" Width="55" Binding="{Binding Hits}"/>
+                <DataGridTextColumn Header="Custom" Width="60" Binding="{Binding Custom}"/>
+                <DataGridTextColumn Header="Fails" Width="55" Binding="{Binding Fails}"/>
+                <DataGridTextColumn Header="Errors" Width="55" Binding="{Binding Errors}"/>
+                <DataGridTextColumn Header="CPM" Width="55" Binding="{Binding CPM}"/>
+                <DataGridTextColumn Header="Progress" Width="100" Binding="{Binding ProgressString}"/>
+                <DataGridTextColumn Header="Elapsed" Width="70" Binding="{Binding Elapsed}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

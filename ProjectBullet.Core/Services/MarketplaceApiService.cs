@@ -4,11 +4,13 @@ using ProjectBullet.Core.Models.Settings;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProjectBullet.Core.Services;
@@ -20,6 +22,8 @@ public class MarketplaceApiService
     private readonly ProjectBulletSettingsService _settingsService;
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly SemaphoreSlim _reAuthLock = new(1, 1);
+    private bool _isReAuthenticating;
 
     private MarketplaceSettings Settings => _settingsService.Settings.MarketplaceSettings;
 
@@ -42,6 +46,57 @@ public class MarketplaceApiService
             !string.IsNullOrEmpty(Settings.AuthToken)
                 ? new AuthenticationHeaderValue("Bearer", Settings.AuthToken)
                 : null;
+    }
+
+    /// <summary>
+    /// Re-authenticate via HWID init when a 401 is received.
+    /// Thread-safe: only one re-auth happens at a time.
+    /// </summary>
+    private async Task<bool> ReAuthenticateAsync()
+    {
+        if (_isReAuthenticating) return false;
+
+        await _reAuthLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            _isReAuthenticating = true;
+
+            var hwid = GetHWID();
+            var payload = JsonSerializer.Serialize(new { hwid });
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            // Don't set auth header for init - it doesn't require auth
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+            var response = await _httpClient.PostAsync($"{BaseUrl}/auth/init", content).ConfigureAwait(false);
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var authResp = JsonSerializer.Deserialize<AuthResponse>(json, _jsonOptions);
+                if (authResp != null)
+                {
+                    Settings.AuthToken = authResp.Token;
+                    Settings.CachedUsername = authResp.User?.Username ?? Settings.CachedUsername;
+                    Settings.CachedUserId = authResp.User?.Id ?? Settings.CachedUserId;
+                    Settings.IsRegisteredUser = authResp.User?.IsRegistered ?? Settings.IsRegisteredUser;
+                    CurrentUser = authResp.User;
+                    SetAuthHeader();
+                    await _settingsService.SaveAsync().ConfigureAwait(false);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            _isReAuthenticating = false;
+            _reAuthLock.Release();
+        }
     }
 
     private static string GetHWID()
@@ -85,32 +140,13 @@ public class MarketplaceApiService
                 }
             }
 
-            // Token invalid or missing — init with HWID
-            var hwid = GetHWID();
-            var payload = JsonSerializer.Serialize(new { hwid });
-            var content = new StringContent(payload, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync($"{BaseUrl}/auth/init", content).ConfigureAwait(false);
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var authResp = JsonSerializer.Deserialize<AuthResponse>(json, _jsonOptions);
-                if (authResp != null)
-                {
-                    Settings.AuthToken = authResp.Token;
-                    Settings.CachedUsername = authResp.User?.Username ?? string.Empty;
-                    Settings.CachedUserId = authResp.User?.Id ?? 0;
-                    Settings.IsRegisteredUser = authResp.User?.IsRegistered ?? false;
-                    CurrentUser = authResp.User;
-                    SetAuthHeader();
-                    await _settingsService.SaveAsync().ConfigureAwait(false);
-                }
-            }
+            // Token invalid or missing — re-authenticate via HWID
+            await ReAuthenticateAsync().ConfigureAwait(false);
         }
         catch
         {
             // Silently fail on init — marketplace is optional
+            // Settings remain unchanged so registered users keep their cached state
         }
     }
 
@@ -197,7 +233,22 @@ public class MarketplaceApiService
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                // The API returns { "user": { ... } } wrapper
+                using var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("user", out var userElement))
+                {
+                    return JsonSerializer.Deserialize<MarketplaceUser>(userElement.GetRawText(), _jsonOptions);
+                }
+
+                // Fallback: try direct deserialization
                 return JsonSerializer.Deserialize<MarketplaceUser>(json, _jsonOptions);
+            }
+
+            // 401 means token is invalid/expired
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return null; // Caller (InitAsync) will trigger re-auth
             }
         }
         catch { }
@@ -233,6 +284,14 @@ public class MarketplaceApiService
                 query += $"&sort={Uri.EscapeDataString(sort)}";
 
             var response = await _httpClient.GetAsync($"{BaseUrl}/items{query}").ConfigureAwait(false);
+
+            // Auto-recover from expired token
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.GetAsync($"{BaseUrl}/items{query}").ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -251,7 +310,15 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            var response = await _httpClient.GetAsync($"{BaseUrl}/items?user_id={Settings.CachedUserId}").ConfigureAwait(false);
+            var url = $"{BaseUrl}/items?user_id={Settings.CachedUserId}";
+            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -270,7 +337,15 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            var response = await _httpClient.GetAsync($"{BaseUrl}/items/{id}").ConfigureAwait(false);
+            var url = $"{BaseUrl}/items/{id}";
+            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -294,6 +369,12 @@ public class MarketplaceApiService
                 url += $"?password={Uri.EscapeDataString(password)}";
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            }
 
             if (response.IsSuccessStatusCode)
             {
@@ -320,21 +401,33 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            using var form = new MultipartFormDataContent();
-            form.Add(new StringContent(name), "name");
-            form.Add(new StringContent(category), "category");
-            form.Add(new StringContent(description ?? string.Empty), "description");
-            form.Add(new StringContent(version), "version");
 
-            if (!string.IsNullOrEmpty(password))
-                form.Add(new StringContent(password), "password");
+            MultipartFormDataContent BuildForm()
+            {
+                var form = new MultipartFormDataContent();
+                form.Add(new StringContent(name), "name");
+                form.Add(new StringContent(category), "category");
+                form.Add(new StringContent(description ?? string.Empty), "description");
+                form.Add(new StringContent(version), "version");
+                if (!string.IsNullOrEmpty(password))
+                    form.Add(new StringContent(password), "password");
+                var fileBytes = File.ReadAllBytes(filePath);
+                var fileContent = new ByteArrayContent(fileBytes);
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                form.Add(fileContent, "file", Path.GetFileName(filePath));
+                return form;
+            }
 
-            var fileBytes = await File.ReadAllBytesAsync(filePath).ConfigureAwait(false);
-            var fileContent = new ByteArrayContent(fileBytes);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-            form.Add(fileContent, "file", Path.GetFileName(filePath));
+            using var form1 = BuildForm();
+            var response = await _httpClient.PostAsync($"{BaseUrl}/items", form1).ConfigureAwait(false);
 
-            var response = await _httpClient.PostAsync($"{BaseUrl}/items", form).ConfigureAwait(false);
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                using var form2 = BuildForm();
+                response = await _httpClient.PostAsync($"{BaseUrl}/items", form2).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -354,7 +447,14 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            var response = await _httpClient.DeleteAsync($"{BaseUrl}/items/{id}").ConfigureAwait(false);
+            var url = $"{BaseUrl}/items/{id}";
+            var response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
+            }
 
             if (response.IsSuccessStatusCode)
                 return (true, null);
@@ -378,6 +478,14 @@ public class MarketplaceApiService
             SetAuthHeader();
             var content = new StringContent("{}", Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync($"{BaseUrl}/auth/login-link", content).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                content = new StringContent("{}", Encoding.UTF8, "application/json");
+                response = await _httpClient.PostAsync($"{BaseUrl}/auth/login-link", content).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -407,6 +515,14 @@ public class MarketplaceApiService
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync($"{BaseUrl}/webhook/setup", content).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                content = new StringContent(payload, Encoding.UTF8, "application/json");
+                response = await _httpClient.PostAsync($"{BaseUrl}/webhook/setup", content).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -429,7 +545,15 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            var response = await _httpClient.GetAsync($"{BaseUrl}/webhook/config").ConfigureAwait(false);
+            var url = $"{BaseUrl}/webhook/config";
+            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -452,7 +576,14 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            var response = await _httpClient.DeleteAsync($"{BaseUrl}/webhook/config").ConfigureAwait(false);
+            var url = $"{BaseUrl}/webhook/config";
+            var response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.DeleteAsync(url).ConfigureAwait(false);
+            }
 
             if (response.IsSuccessStatusCode)
                 return (true, null);
@@ -472,7 +603,15 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
-            var response = await _httpClient.GetAsync($"{BaseUrl}/webhook/poll").ConfigureAwait(false);
+            var url = $"{BaseUrl}/webhook/poll";
+            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            }
+
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (response.IsSuccessStatusCode)
@@ -495,13 +634,77 @@ public class MarketplaceApiService
         try
         {
             SetAuthHeader();
+            var url = $"{BaseUrl}/webhook/messages/{messageId}/ack";
             var content = new StringContent("{}", Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{BaseUrl}/webhook/messages/{messageId}/ack", content).ConfigureAwait(false);
+            var response = await _httpClient.PostAsync(url, content).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                content = new StringContent("{}", Encoding.UTF8, "application/json");
+                response = await _httpClient.PostAsync(url, content).ConfigureAwait(false);
+            }
+
             return response.IsSuccessStatusCode;
         }
         catch
         {
             return false;
+        }
+    }
+
+    // ── Heartbeat ──
+
+    private Timer _heartbeatTimer;
+
+    public void StartHeartbeat(string appVersion = null)
+    {
+        _heartbeatTimer?.Dispose();
+
+        // Send immediately, then every 2 minutes
+        _heartbeatTimer = new Timer(async _ =>
+        {
+            await SendHeartbeatAsync(appVersion).ConfigureAwait(false);
+        }, null, TimeSpan.Zero, TimeSpan.FromMinutes(2));
+    }
+
+    public void StopHeartbeat()
+    {
+        _heartbeatTimer?.Dispose();
+        _heartbeatTimer = null;
+    }
+
+    public async Task SendHeartbeatAsync(string appVersion = null)
+    {
+        try
+        {
+            if (!IsAuthenticated) return;
+
+            SetAuthHeader();
+            var hwid = GetHWID();
+            var os = RuntimeInformation.OSDescription;
+            var version = appVersion ?? "unknown";
+
+            var payload = JsonSerializer.Serialize(new { hwid, os, version });
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{BaseUrl}/heartbeat", content).ConfigureAwait(false);
+
+            // If token expired, re-authenticate and retry once
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                if (await ReAuthenticateAsync().ConfigureAwait(false))
+                {
+                    SetAuthHeader();
+                    var retryPayload = JsonSerializer.Serialize(new { hwid, os, version });
+                    var retryContent = new StringContent(retryPayload, Encoding.UTF8, "application/json");
+                    await _httpClient.PostAsync($"{BaseUrl}/heartbeat", retryContent).ConfigureAwait(false);
+                }
+            }
+        }
+        catch
+        {
+            // Silently fail — heartbeat is non-critical
         }
     }
 

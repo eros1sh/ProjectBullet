@@ -1,0 +1,93 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:uc="clr-namespace:ProjectBullet.Avalonia.Controls"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.SelectConfigDialog"
+             Width="800"
+             Height="600">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="filterTextbox" HorizontalAlignment="Stretch" Grid.Column="0" Text="{Binding SearchString}" Margin="0 5 5 5" />
+            <Button Classes="styled" x:Name="searchButton" Grid.Column="1" Click="Search" Margin="0 5 5 5" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-magnify" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Search</TextBlock>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Configs DataGrid -->
+        <DataGrid
+            x:Name="configsDataGrid"
+            Grid.Row="1"
+            Foreground="{DynamicResource ForegroundMain}"
+            Background="Transparent"
+            ItemsSource="{Binding Path=ConfigsCollection}"
+            SelectionMode="Single"
+            BorderThickness="1"
+            IsReadOnly="True"
+            AutoGenerateColumns="False"
+            SelectionChanged="ItemHovered"
+            DoubleTapped="ListItemDoubleClick">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Author" Binding="{Binding Author}" />
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100" />
+                <DataGridTextColumn Header="Proxies" Binding="{Binding NeedsProxies}" />
+                <DataGridTextColumn Header="Remote" Binding="{Binding IsRemote}" />
+                <DataGridTextColumn Header="Wordlists" Binding="{Binding AllowedWordlistTypes}" />
+                <DataGridTextColumn Header="Creation Date" Binding="{Binding CreationDate}" Width="150" />
+                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastModified}" Width="150" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <GridSplitter
+            ResizeDirection="Rows"
+            Grid.Row="2"
+            Height="5"
+            HorizontalAlignment="Stretch" />
+
+        <Grid Grid.Row="3">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0">Information provided by the author:</Label>
+                <uc:MarkdownViewer
+                    MarkdownText="{Binding HoveredConfig.Readme}"
+                    Grid.Row="1"
+                    FontSize="12"/>
+            </Grid>
+        </Grid>
+
+        <Button Click="Accept"
+                Grid.Row="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0 10 0 0"
+                Classes="success"
+                HorizontalAlignment="Stretch" >
+            <StackPanel Orientation="Horizontal">
+                <icons:Icon Value="mdi-check" />
+                <TextBlock VerticalAlignment="Center" Margin="5 0">Accept</TextBlock>
+            </StackPanel>
+        </Button>
+
+    </Grid>
+</UserControl>

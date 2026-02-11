@@ -1,0 +1,346 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.MultiRunJobViewer"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      xmlns:controls="clr-namespace:ProjectBullet.Avalonia.Controls"
+      xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="650" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="150" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="5,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Job options -->
+            <StackPanel Grid.Column="0" Spacing="2">
+                <Image
+                    Source="{Binding ConfigIcon}"
+                    Width="48"
+                    Height="48"
+                    HorizontalAlignment="Left"
+                    Margin="5,0,0,0"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Skip:</TextBlock>
+                    <TextBlock Text="{Binding Job.Skip}" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Bots:</TextBlock>
+                    <TextBlock Text="{Binding Job.Bots}" VerticalAlignment="Center" />
+                    <icons:Icon
+                        Foreground="{DynamicResource ForegroundMain}"
+                        Margin="5,0,0,0"
+                        Value="mdi-pencil"
+                        Cursor="Hand"
+                        PointerPressed="ChangeBots" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="10,0,0,0" Spacing="2" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Config:</TextBlock>
+                    <TextBlock Text="{Binding ConfigNameAndAuthor}" Margin="5,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Data pool:</TextBlock>
+                    <TextBlock Text="{Binding DataPoolInfo}" Margin="5,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Proxy mode:</TextBlock>
+                    <TextBlock Text="{Binding Job.ProxyMode}" Margin="5,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Proxy sources:</TextBlock>
+                    <TextBlock Text="{Binding ProxySourcesInfo}" Margin="5,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Hit outputs:</TextBlock>
+                    <TextBlock Text="{Binding HitOutputsInfo}" Margin="5,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
+                    IsVisible="{Binding HasCustomInputs}">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Custom Inputs:</TextBlock>
+                    <TextBlock Text="{Binding CustomInputsInfo}" Margin="5,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom" Spacing="2">
+                <TextBlock Text="{Binding RemainingWaitString}"
+                       IsVisible="{Binding IsWaiting}" VerticalAlignment="Center" />
+                <TextBlock Text="Starting..."
+                       IsVisible="{Binding IsStarting}" VerticalAlignment="Center" />
+                <TextBlock Text="Stopping..."
+                       IsVisible="{Binding IsStopping}" VerticalAlignment="Center" />
+                <TextBlock Text="Pausing..."
+                       IsVisible="{Binding IsPausing}" VerticalAlignment="Center" />
+                <Button Click="Start"
+                    IsVisible="{Binding CanStart}"
+                    Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-play" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Start</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Resume"
+                    IsVisible="{Binding CanResume}"
+                    Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-play" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Resume</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Pause"
+                    IsVisible="{Binding CanPause}"
+                    Classes="warning">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-pause" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Pause</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="SkipWait"
+                    IsVisible="{Binding CanSkipWait}"
+                    Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-fast-forward" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Skip wait</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Stop"
+                    IsVisible="{Binding CanStop}"
+                    Classes="danger">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-stop" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Stop</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Abort"
+                    IsVisible="{Binding CanAbort}"
+                    Classes="danger">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-close-outline" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Abort</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="ChangeOptions"
+                    IsVisible="{Binding CanChangeOptions}"
+                    Classes="primary">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-pencil" />
+                        <TextBlock VerticalAlignment="Center" Margin="5,0">Options</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5,2" Height="24">
+            <ProgressBar
+                Minimum="0"
+                Maximum="100"
+                Height="20"
+                Value="{Binding Progress, Mode=OneWay}" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="{Binding Job.ProgressString}"
+                FontWeight="Bold"
+                FontSize="11" />
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Bots DataGrid -->
+            <DataGrid
+                x:Name="botsListView"
+                Grid.Column="0"
+                Foreground="{DynamicResource ForegroundMain}"
+                Background="Transparent"
+                ItemsSource="{Binding BotsCollection}"
+                SelectionMode="Extended"
+                BorderThickness="1"
+                IsReadOnly="True"
+                CanUserResizeColumns="True"
+                CanUserSortColumns="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="40" />
+                    <DataGridTextColumn Header="Data" Binding="{Binding Data}" Width="200" />
+                    <DataGridTextColumn Header="Proxy" Binding="{Binding Proxy}" Width="150" />
+                    <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter
+                ResizeDirection="Columns"
+                Grid.Column="1"
+                Width="1"
+                VerticalAlignment="Stretch" />
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DataGrid
+                    x:Name="hitsListView"
+                    Foreground="{DynamicResource ForegroundMain}"
+                    Background="Transparent"
+                    ItemsSource="{Binding HitsCollection}"
+                    SelectionMode="Extended"
+                    BorderThickness="1"
+                    IsReadOnly="True"
+                    CanUserResizeColumns="True"
+                    CanUserSortColumns="True">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy Selected Data" Click="CopySelectedHits"/>
+                            <MenuItem Header="Copy Selected Proxy" Click="CopySelectedProxies"/>
+                            <MenuItem Header="Copy Selected Data with Capture" Click="CopySelectedHitsCapture"/>
+                            <MenuItem Header="Send To Debugger" Click="SendToDebugger"/>
+                            <MenuItem Header="Select All" Click="SelectAll"/>
+                            <MenuItem Header="Show Bot Log" Click="ShowBotLog"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Time" Binding="{Binding Time}" />
+                        <DataGridTextColumn Header="Data" Binding="{Binding Data}" />
+                        <DataGridTextColumn Header="Proxy" Binding="{Binding Proxy}" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" />
+                        <DataGridTextColumn Header="Capture" Binding="{Binding Capture}" Width="*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <ComboBox
+                    Grid.Row="1"
+                    ItemsSource="{Binding HitsFilters}"
+                    SelectedItem="{Binding HitsFilter}"/>
+
+            </Grid>
+
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <controls:ColoredLog
+                Grid.Column="0"
+                MaxHeight="165"
+                x:Name="jobLog" />
+
+            <StackPanel Grid.Column="1" Margin="8,0" Spacing="1">
+                <TextBlock FontWeight="Bold" Margin="0,2,0,4" FontSize="12" Foreground="{DynamicResource ForegroundMain}">DATA</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">Tested:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataTested}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}" FontSize="12">Hits:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataHits}" Foreground="{DynamicResource ForegroundGood}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundCustom}" FontSize="12">Custom:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataCustom}" Foreground="{DynamicResource ForegroundCustom}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}" FontSize="12">Fails:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataFails}" Foreground="{DynamicResource ForegroundBad}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}" FontSize="12">Invalid:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataInvalid}" Foreground="{DynamicResource ForegroundBad}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundRetry}" FontSize="12">Retried:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataRetried}" Foreground="{DynamicResource ForegroundRetry}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBanned}" FontSize="12">Banned:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataBanned}" Foreground="{DynamicResource ForegroundBanned}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundToCheck}" FontSize="12">To check:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataToCheck}" Foreground="{DynamicResource ForegroundToCheck}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}" FontSize="12">Errors:</TextBlock>
+                    <TextBlock Text="{Binding Job.DataErrors}" Foreground="{DynamicResource ForegroundBad}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Margin="8,0" Spacing="1">
+                <TextBlock FontWeight="Bold" Margin="0,2,0,4" FontSize="12" Foreground="{DynamicResource ForegroundMain}">PROXIES</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">Total:</TextBlock>
+                    <TextBlock Text="{Binding Job.ProxiesTotal}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}" FontSize="12">Alive:</TextBlock>
+                    <TextBlock Text="{Binding Job.ProxiesAlive}" Foreground="{DynamicResource ForegroundGood}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}" FontSize="12">Bad:</TextBlock>
+                    <TextBlock Text="{Binding Job.ProxiesBad}" Foreground="{DynamicResource ForegroundBad}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBanned}" FontSize="12">Banned:</TextBlock>
+                    <TextBlock Text="{Binding Job.ProxiesBanned}" Foreground="{DynamicResource ForegroundBanned}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Margin="8,0" Spacing="1">
+                <TextBlock FontWeight="Bold" Margin="0,2,0,4" FontSize="12" Foreground="{DynamicResource ForegroundMain}">OTHERS</TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">CPM:</TextBlock>
+                    <TextBlock Text="{Binding Job.CPM}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">Captcha credit:</TextBlock>
+                    <TextBlock Text="{Binding Job.CaptchaCredit}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">Elapsed:</TextBlock>
+                    <TextBlock Text="{Binding Job.ElapsedString}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">Remaining:</TextBlock>
+                    <TextBlock Text="{Binding Job.RemainingString}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold" FontSize="12">Progress:</TextBlock>
+                    <TextBlock Text="{Binding Job.ProgressString}" Margin="5,0,0,0" FontSize="12" />
+                </StackPanel>
+            </StackPanel>
+
+        </Grid>
+
+        <!-- CPM & Hits Chart -->
+        <lvc:CartesianChart
+            Grid.Row="4"
+            x:Name="cpmHitsChart"
+            Background="Transparent"
+            Margin="5,5,5,0" />
+    </Grid>
+</UserControl>

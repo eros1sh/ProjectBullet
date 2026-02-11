@@ -1,0 +1,118 @@
+<UserControl x:Class="ProjectBullet.Avalonia.Views.Pages.Proxies"
+      xmlns="https://github.com/avaloniaui"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ProjectBullet.Avalonia.Views.Pages"
+      xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+      mc:Ignorable="d"
+      d:DesignHeight="550" d:DesignWidth="780">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button x:Name="addGroupButton" Click="AddGroup" Margin="0,5,5,5" Classes="success" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-plus" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Add Group</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="editGroupButton" Click="EditGroup" Margin="0,5,5,5" Classes="primary" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-pencil" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Edit Group</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="deleteGroupButton" Click="DeleteGroup" Margin="0,5,5,5" Classes="danger" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Delete Group</TextBlock>
+                </StackPanel>
+            </Button>
+            <TextBlock VerticalAlignment="Center" Margin="5,0">Selected group:</TextBlock>
+            <ComboBox
+                  Height="30"
+                  ItemsSource="{Binding Path=ProxyGroupsCollection}"
+                  SelectedItem="{Binding SelectedGroup}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button x:Name="importButton" Click="Import" Margin="0,5,5,5" Classes="success" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-import" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Import</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="exportButton" Click="ExportSelected" Margin="0,5,5,5" Classes="primary" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-export" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Export</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="deleteButton" Click="DeleteSelected" Margin="0,5,5,5" Classes="danger" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Delete</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="deleteNotWorkingButton" Click="DeleteNotWorking" Margin="0,5,5,5" Classes="danger" ToolTip.Tip="Deletes not working proxies.">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Delete Not Working</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="deleteUntestedButton" Click="DeleteUntested" Margin="0,5,5,5" Classes="danger" ToolTip.Tip="Deletes proxies that haven't been tested.">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5,0">Delete Untested</TextBlock>
+                </StackPanel>
+            </Button>
+            <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0">Total:</TextBlock>
+            <TextBlock Text="{Binding Total}" VerticalAlignment="Center" Margin="5,0,0,0" />
+            <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundGood}" VerticalAlignment="Center" Margin="10,0,0,0">Working:</TextBlock>
+            <TextBlock Text="{Binding Working}" Foreground="{DynamicResource ForegroundGood}" VerticalAlignment="Center" Margin="5,0,0,0" />
+            <TextBlock FontWeight="Bold" Foreground="{DynamicResource ForegroundBad}" VerticalAlignment="Center" Margin="10,0,0,0">Not working:</TextBlock>
+            <TextBlock Text="{Binding NotWorking}" Foreground="{DynamicResource ForegroundBad}" VerticalAlignment="Center" Margin="5,0,0,0" />
+        </StackPanel>
+
+        <DataGrid x:Name="proxiesListView" Grid.Row="2"
+                  Foreground="{DynamicResource ForegroundMain}"
+                  Background="Transparent"
+                  ItemsSource="{Binding Path=ProxiesCollection}"
+                  SelectionMode="Extended"
+                  BorderThickness="1"
+                  IsReadOnly="True"
+                  CanUserResizeColumns="True"
+                  CanUserSortColumns="True"
+                  DragDrop.AllowDrop="True">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="copySelectedProxies" Header="Copy Selected Proxies" Click="CopySelectedProxies"/>
+                    <MenuItem x:Name="copySelectedProxiesFull" Header="Copy Selected Proxies (with type and credentials)" Click="CopySelectedProxiesFull"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}" />
+                <DataGridTextColumn Header="Host" Binding="{Binding Host}" />
+                <DataGridTextColumn Header="Port" Binding="{Binding Port}" />
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" />
+                <DataGridTextColumn Header="Password" Binding="{Binding Password}" />
+                <DataGridTextColumn Header="Country" Binding="{Binding Country}" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" />
+                <DataGridTextColumn Header="Ping" Binding="{Binding Ping}" />
+                <DataGridTextColumn Header="Last Checked" Binding="{Binding LastChecked}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.AppLockSetupDialog"
+             MinWidth="350"
+             Background="{DynamicResource BackgroundSecondary}">
+
+    <Border Padding="20">
+        <StackPanel
+            MaxWidth="400"
+            HorizontalAlignment="Center">
+
+            <TextBlock
+                Text="Set App Lock Password"
+                FontSize="16"
+                FontWeight="Bold"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Foreground="Gainsboro"
+                Margin="0 0 0 15" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
+                <Label Foreground="Gainsboro" Width="120">Password:</Label>
+                <TextBox x:Name="passwordBox" PasswordChar="*" Width="200" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
+                <Label Foreground="Gainsboro" Width="120">Confirm:</Label>
+                <TextBox x:Name="confirmBox" PasswordChar="*" Width="200" />
+            </StackPanel>
+
+            <TextBlock
+                x:Name="errorText"
+                Text=""
+                Foreground="Red"
+                FontSize="12"
+                TextAlignment="Center"
+                HorizontalAlignment="Center"
+                Margin="0 0 0 10" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Click="Save"
+                    Margin="0 5 5 5" Classes="success">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-check" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Save</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Click="Cancel"
+                    Margin="0 5 5 5" Classes="danger">
+                    <StackPanel Orientation="Horizontal">
+                        <icons:Icon Value="mdi-close" />
+                        <TextBlock VerticalAlignment="Center" Margin="5 0">Cancel</TextBlock>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+        </StackPanel>
+    </Border>
+
+</UserControl>

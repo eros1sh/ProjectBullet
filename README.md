@@ -1,6 +1,6 @@
 # ProjectBullet
 
-A powerful, extensible automation and testing toolkit built with .NET 9 and WPF. ProjectBullet provides a rich set of tools for HTTP request automation, credential testing, proxy management, and more — all through an intuitive native Windows interface.
+A powerful, extensible automation and testing toolkit built with .NET 9. ProjectBullet provides a rich set of tools for HTTP request automation, credential testing, proxy management, and more — available as both a native Windows (WPF) application and a cross-platform (Avalonia UI) application for Windows, macOS, and Linux.
 
 ## Screenshots
 
@@ -12,7 +12,34 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 |----------|-------|
 | ![Settings](ProjectBullet.github/pbsettings.png) | ![About](ProjectBullet.github/about.png) |
 
+## Downloads
+
+### Cross-Platform (Avalonia UI) — Windows, macOS, Linux
+| Platform | Architecture | Download |
+|----------|-------------|----------|
+| Windows | x64 | `ProjectBullet.Avalonia-win-x64.zip` |
+| Windows | ARM64 | `ProjectBullet.Avalonia-win-arm64.zip` |
+| Linux | x64 | `ProjectBullet.Avalonia-linux-x64.zip` |
+| Linux | ARM64 | `ProjectBullet.Avalonia-linux-arm64.zip` |
+| macOS | x64 (Intel) | `ProjectBullet.Avalonia-osx-x64.zip` |
+| macOS | ARM64 (Apple Silicon) | `ProjectBullet.Avalonia-osx-arm64.zip` |
+
+### Windows Only (WPF — Legacy)
+| Platform | Architecture | Download |
+|----------|-------------|----------|
+| Windows | x64 | `ProjectBullet.Native-win-x64.zip` |
+| Windows | x86 | `ProjectBullet.Native-win-x86.zip` |
+| Windows | ARM64 | `ProjectBullet.Native-win-arm64.zip` |
+
+Download the latest release from [Releases](https://github.com/eros1sh/ProjectBullet/releases).
+
 ## Features
+
+### Cross-Platform Support (New in v0.0.4)
+- **Avalonia UI** — Full cross-platform desktop application supporting Windows, macOS (Intel & Apple Silicon), and Linux
+- **Feature Parity** — All features from the WPF version are available in the Avalonia version
+- **Native Look & Feel** — Uses FluentAvalonia for modern, platform-adaptive theming
+- **Same Codebase** — Core logic, Telegram bot, and automation engine are shared between both UI frontends
 
 ### Core Functionality
 - **Multi-Run Job Engine** — Execute configs against large data sets with parallel processing, customizable bot counts, and real-time statistics (CPM, hits, progress)
@@ -90,26 +117,19 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
   - Hit notifications with enhanced format (proxy, capture, timestamp)
   - Job start/stop notifications
   - Daily summary reports at configurable times
-- **Telegram Webhook Relay** — Receive Telegram bot updates through a server-side relay for users without static IPs:
-  - One-click webhook setup from PB Settings
-  - Server queues incoming Telegram updates
-  - App polls the relay server every 2 seconds
-  - Automatic message acknowledgment
-  - Copyable webhook URL in settings
-  - Seamless switching between long polling and webhook modes
+- **Telegram Webhook Relay** — Receive Telegram bot updates through a server-side relay for users without static IPs
 - **Remote Configs** — Load configs from remote endpoints
 
 ### Captcha Solving
 - **Multi-Provider Support** — Integrations with popular captcha solving services
-- **12ws (wssolver.net)** — New captcha provider block for configs; calls `wssolver.net/token` API and returns the solved token as text
-- **solvertr (solver.tr)** — New captcha provider block for configs; calls `solver.tr` API and returns the solved token as json
+- **12ws (wssolver.net)** — New captcha provider block for configs
+- **solvertr (solver.tr)** — New captcha provider block for configs
 
 ### Auto-Update
 - **Automatic Updates** — The app checks GitHub for new releases daily; when a new version is found, a 10-second countdown dialog appears and the update proceeds automatically
-- **Silent Updater** — The standalone updater supports `--silent` mode for non-interactive updates launched from the app
-- **User Data Preservation** — All user data (`UserData/` folder: configs, wordlists, proxies, plugins, hits, settings) is preserved during updates
-- **Running Job Protection** — Auto-update is skipped when jobs are actively running to prevent data loss
-- **Configurable** — Auto-update can be enabled/disabled from Settings; manual update button always available on Home page
+- **Silent Updater** — The standalone updater supports `--silent` mode for non-interactive updates
+- **User Data Preservation** — All user data is preserved during updates
+- **Running Job Protection** — Auto-update is skipped when jobs are actively running
 - **Auto-Relaunch** — In silent mode, the updater automatically relaunches ProjectBullet after a successful update
 
 ### Security
@@ -128,6 +148,11 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 
 ## Requirements
 
+### Cross-Platform (Avalonia)
+- **Operating System**: Windows 10/11, macOS 12+, Linux (x64 or ARM64)
+- **Runtime**: [.NET 9.0 Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)
+
+### Windows Only (WPF)
 - **Operating System**: Windows 10/11 (x64, x86, or ARM64)
 - **Runtime**: [.NET 9.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/9.0)
 
@@ -136,8 +161,12 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 ### From Release (Recommended)
 1. Download the latest release from [Releases](https://github.com/eros1sh/ProjectBullet/releases)
 2. Extract the ZIP archive to a folder of your choice
-3. Make sure [.NET 9.0 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/9.0) is installed
-4. Run `ProjectBullet.Native.exe`
+3. Install the appropriate .NET 9.0 runtime for your platform
+4. Run the executable:
+   - **Windows (Avalonia)**: `ProjectBullet.Avalonia.exe`
+   - **Windows (WPF)**: `ProjectBullet.Native.exe`
+   - **Linux**: `./ProjectBullet.Avalonia`
+   - **macOS**: `./ProjectBullet.Avalonia`
 
 ### Build from Source
 ```bash
@@ -145,11 +174,14 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 git clone https://github.com/eros1sh/ProjectBullet.git
 cd ProjectBullet
 
-# Build
-dotnet build ProjectBullet.sln -c Release
+# Build WPF version (Windows only)
+dotnet publish ProjectBullet.Native -c Release -r win-x64 -o ./publish/native
 
-# Or publish for a specific platform
-dotnet publish ProjectBullet.Native -c Release -r win-x64 -o ./publish
+# Build Avalonia version (cross-platform)
+dotnet publish ProjectBullet.Avalonia -c Release -r win-x64 -o ./publish/avalonia-win
+dotnet publish ProjectBullet.Avalonia -c Release -r linux-x64 -o ./publish/avalonia-linux
+dotnet publish ProjectBullet.Avalonia -c Release -r osx-x64 -o ./publish/avalonia-mac
+dotnet publish ProjectBullet.Avalonia -c Release -r osx-arm64 -o ./publish/avalonia-mac-arm
 ```
 
 ## Project Structure
@@ -165,7 +197,14 @@ ProjectBullet/
 ├── RuriLib.Proxies/                  # Proxy client library (HTTP/SOCKS4/5)
 ├── RuriLib.Parallelization/          # Parallel execution engine (Channel<T> based)
 ├── ProjectBullet.Core/               # Application core (EF Core, repositories, services)
-├── ProjectBullet.Native/             # WPF desktop application
+├── ProjectBullet.Avalonia/           # Cross-platform desktop app (Avalonia UI)
+│   ├── Views/Pages/                  # AXAML pages
+│   ├── Views/Dialogs/                # AXAML dialog windows
+│   ├── Controls/                     # Custom AXAML controls
+│   ├── ViewModels/                   # MVVM view models
+│   ├── Helpers/                      # Utilities and converters
+│   └── Platforms/                    # Platform-specific abstractions
+├── ProjectBullet.Native/             # Windows-only WPF desktop app (legacy)
 │   ├── Views/                        # XAML pages and dialogs
 │   ├── ViewModels/                   # MVVM view models
 │   └── Helpers/                      # Utilities and converters
@@ -198,51 +237,56 @@ Application settings are accessible from the **Settings** page and are persisted
 ## Tech Stack
 
 - **.NET 9.0** — Runtime and framework
-- **WPF** — Windows desktop UI with MVVM pattern
-- **Entity Framework Core 9.0.3** — Data persistence with SQLite (WAL mode)
-- **Roslyn 5.0.0** — C# runtime scripting and compilation
-- **Jint 4.5.0** — JavaScript (ES2024) execution engine
-- **IronPython 3.4.1** — Python 3 scripting support
-- **MahApps.Metro** — Modern Windows UI controls and themes
-- **AvalonEdit** — Code editor with syntax highlighting
+- **Avalonia UI 11.2** — Cross-platform desktop UI with MVVM pattern (Windows, macOS, Linux)
+- **WPF** — Windows-only desktop UI with MVVM pattern (legacy)
+- **FluentAvalonia 2.2** — Modern, fluent design system for Avalonia
+- **Entity Framework Core 9.0** — Data persistence with SQLite (WAL mode)
+- **Roslyn 5.0** — C# runtime scripting and compilation
+- **Jint 4.5** — JavaScript (ES2024) execution engine
+- **IronPython 3.4** — Python 3 scripting support
+- **AvaloniaEdit 11.2** — Cross-platform code editor with syntax highlighting
+- **LiveCharts2 SkiaSharp** — Real-time charting (Avalonia & WPF)
 - **PuppeteerSharp** — Headless Chrome automation
-- **Selenium 4.40.0** — WebDriver browser automation
+- **Selenium 4.40** — WebDriver browser automation
 - **Telegram.Bot** — Telegram Bot API client
-- **MailKit 4.14.1** — SMTP/POP3/IMAP email protocols
-- **SSH.NET 2025.1.0** — SSH protocol support
-- **FluentFTP 53.0.2** — FTP protocol support
-- **MQTTnet 4.3.7.1207** — MQTT protocol support
-- **QRCoder 1.6.0** — QR code generation
+- **MailKit 4.14** — SMTP/POP3/IMAP email protocols
+- **SSH.NET 2025.1** — SSH protocol support
+- **FluentFTP 53.0** — FTP protocol support
+- **MQTTnet 4.3** — MQTT protocol support
+- **QRCoder 1.6** — QR code generation
 - **BCrypt.Net** — Password hashing
-- **LiveCharts** — Real-time charting
 
 ## CI/CD
 
 GitHub Actions workflows with manual `workflow_dispatch` trigger support:
 
-- **Build + Release** — Triggered on push to `master` with `[build]` in commit message, or manually via "Run workflow"
+- **Build + Release** — Builds both WPF (Windows) and Avalonia (Windows, Linux, macOS) artifacts. Triggered on push to `master` with `[build]` in commit message, or manually.
 - **Build + Release | Staging** — Same for `staging` branch with prerelease tagging
 - **Run Tests** — Automated test execution on push/PR to `master` and `staging`
 - **Docker Build** — Multi-platform Docker image build and push
 
+### Build Artifacts
+Each release includes:
+- **WPF**: `ProjectBullet.Native-win-x64.zip`, `win-x86.zip`, `win-arm64.zip`
+- **Avalonia**: `ProjectBullet.Avalonia-win-x64.zip`, `win-arm64.zip`, `linux-x64.zip`, `linux-arm64.zip`, `osx-x64.zip`, `osx-arm64.zip`
+- **Updater**: `pb-native-updater-win-x64.exe`, `win-x86.exe`, `win-arm64.exe`
+
 ## Changelog
 
-### v0.0.3 (Current)
-- **OpenBullet 2 Migration** — One-click migration tool to import your existing OpenBullet 2 data into ProjectBullet. Supports both SQLite and LiteDB database formats with selective migration options for configs, proxy groups, wordlists, jobs, hits, and records. Includes automatic namespace remapping, wordlist ID mapping, WAL checkpoint handling, and duplicate detection with skip logic. Accessible from Settings page with a visual progress dialog.
+### v0.0.4 (Current)
+- **Cross-Platform Support** — Full Avalonia UI port supporting Windows, macOS, and Linux
+- **OpenBullet 2 Migration** — One-click migration tool (from v0.0.3)
+
+### v0.0.3
+- **OpenBullet 2 Migration** — One-click migration tool to import existing OB2 data
 
 ### v0.0.2
-- **17 New Automation Blocks**: GraphQL, gRPC, DNS Lookup, DNS-over-HTTPS, MQTT, TOTP/HOTP, QR Code, XML Parse, HTML Form Parser, Retry/Loop Control, Variable Watch, TOR Proxy, Python Script Enhancement
-- **HTTP/2 & HTTP/3 Support**: Full HTTP/2 support via SystemNet, experimental HTTP/3 (QUIC) support
-- **TLS Fingerprint Profiles**: Browser-specific cipher suite ordering for Chrome, Firefox, Safari, Edge
-- **Monitor Page Redesign**: Summary cards with hit rate, overall progress bar, per-job progress bars, colored status indicators
-- **Enhanced Syntax Highlighting**: Category-based keyword coloring in LoliCode editor (Network, Crypto, Data, Debug)
-- **Auto-Save Config**: Automatic config saving every 2 minutes in the editor
-- **Channel-Based Parallelizer**: Refactored task distribution engine using `System.Threading.Channels` for better backpressure
-- **SQLite WAL Mode**: Write-Ahead Logging for improved concurrent database performance
-- **ListView Virtualization**: Recycling mode enabled on hit and job lists
+- 17 New Automation Blocks, HTTP/2 & HTTP/3, TLS Fingerprint Profiles, Monitor Redesign, Auto-Save, Channel-Based Parallelizer, SQLite WAL Mode
 
 ### v0.0.1
 - Initial release with core functionality, marketplace integration, Telegram bot, auto-update system
+
+See [CHANGELOG.md](CHANGELOG.md) for full details.
 
 ## Contributing
 

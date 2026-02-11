@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.AutoUpdateDialog">
+
+    <StackPanel Margin="30">
+        <TextBlock
+            FontSize="14"
+            TextWrapping="Wrap"
+            TextAlignment="Center"
+            Foreground="{DynamicResource ForegroundMain}">
+            <Run Text="A new version "/>
+            <Run Foreground="{DynamicResource ForegroundGood}"
+                 FontWeight="Bold"
+                 Text="{Binding RemoteVersion, Mode=OneWay}"/>
+            <Run Text=" is available!"/>
+            <LineBreak/>
+            <Run Text="Current version: "/>
+            <Run Foreground="{DynamicResource ForegroundCustom}"
+                 FontWeight="Bold"
+                 Text="{Binding CurrentVersion, Mode=OneWay}"/>
+        </TextBlock>
+
+        <TextBlock
+            x:Name="countdownText"
+            FontSize="18"
+            FontWeight="Bold"
+            TextAlignment="Center"
+            Margin="0 15 0 0"
+            Foreground="{DynamicResource ForegroundCustom}"
+            Text="{Binding CountdownText, Mode=OneWay}"/>
+
+        <TextBlock
+            FontSize="11"
+            TextWrapping="Wrap"
+            TextAlignment="Center"
+            Margin="0 10 0 0"
+            Opacity="0.7"
+            Foreground="{DynamicResource ForegroundMain}"
+            Text="Your configs, wordlists, proxies and settings will be preserved."/>
+
+        <StackPanel Orientation="Horizontal" Margin="0 15 0 0"
+                    HorizontalAlignment="Center">
+            <Button x:Name="updateNowButton" Click="UpdateNow"
+                    Margin="0 0 10 0" Classes="success">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-update" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Update Now</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="cancelButton" Click="Cancel"
+                    Classes="danger">
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-close" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Cancel</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

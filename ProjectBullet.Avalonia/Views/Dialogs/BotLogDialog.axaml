@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             x:Class="ProjectBullet.Avalonia.Views.Dialogs.BotLogDialog"
+             Width="800"
+             Height="600">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBox
+            x:Name="logTextBox"
+            Grid.Row="0"
+            IsReadOnly="True"
+            AcceptsReturn="True"
+            FontFamily="Consolas"
+            FontSize="10"
+            Foreground="Gainsboro"
+            Background="#FF161616"
+            TextWrapping="Wrap"
+            VerticalContentAlignment="Top" />
+
+        <Grid Grid.Row="1" Margin="0 2 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding SearchString}"/>
+            <Button Classes="styled" Click="Search" Grid.Column="1" Margin="5 0 0 0" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-magnify" />
+                    <TextBlock VerticalAlignment="Center" Margin="5 0">Search</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Classes="styled" Click="PreviousMatch" Grid.Column="2" Margin="5 0 0 0" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-chevron-left" />
+                </StackPanel>
+            </Button>
+            <Label Grid.Column="3" Content="{Binding MatchInfo}"/>
+            <Button Classes="styled" Click="NextMatch" Grid.Column="4" Margin="5 0 0 0" >
+                <StackPanel Orientation="Horizontal">
+                    <icons:Icon Value="mdi-chevron-right" />
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>
