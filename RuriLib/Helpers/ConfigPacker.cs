@@ -20,6 +20,7 @@ namespace RuriLib.Helpers
         private static readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto,
+            SerializationBinder = new SafeSerializationBinder(),
             Formatting = Formatting.Indented
         };
 

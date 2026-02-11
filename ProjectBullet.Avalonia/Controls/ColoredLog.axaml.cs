@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Media;
 
@@ -10,7 +11,7 @@ namespace ProjectBullet.Avalonia.Controls
     public partial class ColoredLog : UserControl
     {
         public int BufferSize { get; set; } = 30;
-        private int count = 0;
+        private readonly Queue<TextBlock> buffer = new();
 
         public ColoredLog()
         {
@@ -28,12 +29,12 @@ namespace ProjectBullet.Avalonia.Controls
             };
 
             log.Children.Add(block);
-            count++;
+            buffer.Enqueue(block);
 
-            if (count > BufferSize)
+            while (buffer.Count > BufferSize)
             {
-                log.Children.RemoveAt(0);
-                count--;
+                var old = buffer.Dequeue();
+                log.Children.Remove(old);
             }
 
             scrollViewer.ScrollToEnd();
@@ -42,7 +43,7 @@ namespace ProjectBullet.Avalonia.Controls
         public void Clear()
         {
             log.Children.Clear();
-            count = 0;
+            buffer.Clear();
         }
     }
 }

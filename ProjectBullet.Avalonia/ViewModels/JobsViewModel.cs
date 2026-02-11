@@ -45,10 +45,17 @@ namespace ProjectBullet.Avalonia.ViewModels
 
         private void RefreshJobs()
         {
-            foreach (var job in JobsCollection)
+            try
             {
-                job.UpdateViewModel();
+                global::Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    foreach (var job in JobsCollection)
+                    {
+                        job.UpdateViewModel();
+                    }
+                });
             }
+            catch { }
         }
 
         private void CreateCollection()
@@ -62,7 +69,7 @@ namespace ProjectBullet.Avalonia.ViewModels
 
         public async Task<JobViewModel> CreateJobAsync(JobOptions options)
         {
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder() };
             var wrapper = new JobOptionsWrapper { Options = options };
 
             var entity = new JobEntity
@@ -86,7 +93,7 @@ namespace ProjectBullet.Avalonia.ViewModels
 
         public async Task<JobViewModel> EditJobAsync(JobEntity entity, JobOptions options)
         {
-            var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder() };
             var wrapper = new JobOptionsWrapper { Options = options };
             entity.JobOptions = JsonConvert.SerializeObject(wrapper, jsonSettings);
 
@@ -105,7 +112,7 @@ namespace ProjectBullet.Avalonia.ViewModels
 
         public async Task<JobViewModel> CloneJobAsync(JobType type, JobOptions options)
         {
-            var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder() };
             var wrapper = new JobOptionsWrapper { Options = options };
             var entity = new JobEntity
             {

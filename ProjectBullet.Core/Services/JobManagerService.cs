@@ -37,7 +37,7 @@ public class JobManagerService : IDisposable
 
         // Restore jobs from the database
         var entities = jobRepo.GetAll().Include(j => j.Owner).ToList();
-        var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+        var jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder() };
 
         foreach (var entity in entities)
         {
@@ -179,7 +179,7 @@ public class JobManagerService : IDisposable
             }
 
             // Deserialize and unwrap the job options
-            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+            var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder() };
             var wrapper = JsonConvert.DeserializeObject<JobOptionsWrapper>(entity.JobOptions, settings);
             var options = (MultiRunJobOptions)wrapper.Options;
 

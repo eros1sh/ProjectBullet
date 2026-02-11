@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace RuriLib.Parallelization
 {
@@ -133,7 +134,7 @@ namespace RuriLib.Parallelization
         /// <summary>
         /// The list of timestamps for CPM calculation.
         /// </summary>
-        protected List<int> checkedTimestamps = new();
+        protected ConcurrentBag<int> checkedTimestamps = new();
 
         /// <summary>
         /// A lock that can be used to update the CPM from a single thread at a time.
@@ -277,7 +278,7 @@ namespace RuriLib.Parallelization
 
             StartTime = DateTime.Now;
             EndTime = null;
-            checkedTimestamps.Clear();
+            checkedTimestamps = new ConcurrentBag<int>();
 
             softCTS = new CancellationTokenSource();
             hardCTS = new CancellationTokenSource();
@@ -376,7 +377,7 @@ namespace RuriLib.Parallelization
                 try
                 {
                     var now = DateTime.Now;
-                    checkedTimestamps = checkedTimestamps.Where(t => Environment.TickCount - t < 60000).ToList();
+                    checkedTimestamps = new ConcurrentBag<int>(checkedTimestamps.Where(t => Environment.TickCount - t < 60000));
                     CPM = checkedTimestamps.Count;                                
                 }
                 finally

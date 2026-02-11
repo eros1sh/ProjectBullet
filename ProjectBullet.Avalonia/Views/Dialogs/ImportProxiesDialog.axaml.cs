@@ -84,10 +84,18 @@ namespace ProjectBullet.Avalonia.Views.Dialogs
 
         private async Task ImportFromUrlAsync(string url)
         {
-            using var client = new HttpClient();
+            // SECURITY FIX: Validate URL scheme to prevent SSRF
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+                (uri.Scheme != "http" && uri.Scheme != "https"))
+            {
+                Alert.Error("Invalid URL", "Only HTTP and HTTPS URLs are allowed.");
+                return;
+            }
+
+            using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
             using var request = new HttpRequestMessage();
 
-            request.RequestUri = new Uri(url);
+            request.RequestUri = uri;
             request.Headers.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36");
 
             using var response = await client.SendAsync(request);

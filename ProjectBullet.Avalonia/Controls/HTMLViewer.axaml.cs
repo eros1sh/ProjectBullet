@@ -27,7 +27,8 @@ namespace ProjectBullet.Avalonia.Controls
                 var newValue = e.NewValue as string;
                 if (!string.IsNullOrEmpty(newValue))
                 {
-                    var html = new HtmlSanitizer().Sanitize(newValue);
+                    var sanitizer = new HtmlSanitizer();
+                    var html = sanitizer.Sanitize(newValue);
                     viewer.Render(html);
                 }
             });

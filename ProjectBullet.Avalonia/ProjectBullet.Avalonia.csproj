@@ -11,6 +11,15 @@
         <NoWarn>NU1608;NU1902</NoWarn>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <DisableBeauty>False</DisableBeauty>
+        <BeautySharedRuntimeMode>False</BeautySharedRuntimeMode>
+        <BeautyOnPublishOnly>True</BeautyOnPublishOnly>
+        <BeautyNoRuntimeInfo>False</BeautyNoRuntimeInfo>
+        <BeautyUsePatch>True</BeautyUsePatch>
+        <BeautyLogLevel>Info</BeautyLogLevel>
+    </PropertyGroup>
+
     <ItemGroup>
         <None Remove="appsettings.json"/>
         <None Remove="Images\logohq.png"/>
@@ -91,6 +100,9 @@
 
         <!-- Code Analysis -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0"/>
+
+        <!-- Build Cleanup -->
+        <PackageReference Include="nulastudio.NetBeauty" Version="2.1.4.5"/>
     </ItemGroup>
 
     <ItemGroup>

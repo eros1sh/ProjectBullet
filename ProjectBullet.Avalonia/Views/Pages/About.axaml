@@ -27,7 +27,36 @@
                        HorizontalAlignment="Center"
                        Foreground="{DynamicResource ForegroundMain}"
                        Opacity="0.6"
-                       Margin="0,0,0,30" />
+                       Margin="0,0,0,15" />
+
+            <!-- Version Info -->
+            <Border Background="{DynamicResource BackgroundSecondary}"
+                    CornerRadius="8" Padding="20,12"
+                    HorizontalAlignment="Center" Margin="0,0,0,20">
+                <StackPanel HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Version " FontSize="14"
+                                   Foreground="{DynamicResource ForegroundMain}" Opacity="0.7"/>
+                        <TextBlock x:Name="currentVersionText" FontSize="14" FontWeight="Bold"
+                                   Foreground="{DynamicResource ForegroundMain}"/>
+                        <TextBlock x:Name="versionTypeText" FontSize="12"
+                                   Foreground="{DynamicResource ForegroundCustom}"
+                                   VerticalAlignment="Center" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel x:Name="latestVersionPanel" Orientation="Horizontal"
+                                HorizontalAlignment="Center" Margin="0,4,0,0"
+                                IsVisible="False">
+                        <TextBlock Text="Latest: " FontSize="12"
+                                   Foreground="{DynamicResource ForegroundMain}" Opacity="0.5"/>
+                        <TextBlock x:Name="latestVersionText" FontSize="12"
+                                   Foreground="{DynamicResource ForegroundGood}"/>
+                    </StackPanel>
+                    <TextBlock x:Name="upToDateText" Text="Up to date"
+                               FontSize="12" HorizontalAlignment="Center"
+                               Foreground="{DynamicResource ForegroundGood}"
+                               Margin="0,4,0,0" IsVisible="False"/>
+                </StackPanel>
+            </Border>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                 <Button Classes="primary" Click="OpenGitHub" Padding="12,8" Margin="0,0,10,0">

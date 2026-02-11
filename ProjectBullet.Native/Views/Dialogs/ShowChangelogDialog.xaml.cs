@@ -1,4 +1,3 @@
-using ProjectBullet.Native.Services;
 using ProjectBullet.Native.ViewModels;
 using System.Net.Http;
 using System.Windows.Controls;
@@ -39,14 +38,12 @@ namespace ProjectBullet.Native.Views.Dialogs
 
             private async void FetchChangelog()
             {
-                var updateService = SP.GetService<UpdateService>();
-
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0");
 
                 try
                 {
-                    var response = await client.GetAsync($"https://raw.githubusercontent.com/eros1sh/ProjectBullet/master/Changelog/{updateService.CurrentVersion}.md");
+                    var response = await client.GetAsync("https://raw.githubusercontent.com/eros1sh/ProjectBullet/refs/heads/main/CHANGELOG.md");
                     Text = await response.Content.ReadAsStringAsync();
                 }
                 catch

@@ -122,7 +122,9 @@
                   CanUserResizeColumns="True"
                   AutoGenerateColumns="False"
                   SelectionChanged="ItemHovered"
-                  DoubleTapped="ListItemDoubleClick">
+                  DoubleTapped="ListItemDoubleClick"
+                  DragDrop.AllowDrop="True"
+                  DragDrop.Drop="ConfigDataGridDrop">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="" Width="30">
                     <DataGridTemplateColumn.CellTemplate>

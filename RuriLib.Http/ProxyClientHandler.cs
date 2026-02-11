@@ -86,8 +86,7 @@ namespace RuriLib.Http
             TlsCipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256,
             TlsCipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384,
             TlsCipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-            TlsCipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
-            TlsCipherSuite.TLS_RSA_WITH_3DES_EDE_CBC_SHA
+            TlsCipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA
         };
 
         /// <summary>
@@ -281,10 +280,10 @@ namespace RuriLib.Http
                         CertificateRevocationCheckMode = CertRevocationMode,
                     };
 
-                    if (CertRevocationMode != X509RevocationMode.Online)
+                    // SECURITY FIX: Only use custom callback if explicitly set, never bypass all validation
+                    if (ServerCertificateCustomValidationCallback != null)
                     {
-                        sslOptions.RemoteCertificateValidationCallback =
-                            new RemoteCertificateValidationCallback((s, c, ch, e) => { return true; });
+                        sslOptions.RemoteCertificateValidationCallback = ServerCertificateCustomValidationCallback;
                     }
 
                     if (UseCustomCipherSuites)

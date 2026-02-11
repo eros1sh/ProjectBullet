@@ -32,7 +32,8 @@ public class ProjectBulletSettingsService
         jsonSettings = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
-            TypeNameHandling = TypeNameHandling.Auto
+            TypeNameHandling = TypeNameHandling.Auto,
+            SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder()
         };
 
         // Migrate from old OpenBulletSettings.json if it exists

@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace ProjectBullet.Avalonia.Views.Pages
 {
@@ -295,6 +296,44 @@ namespace ProjectBullet.Avalonia.Views.Pages
             {
                 cvm.ToggleFavorite();
             }
+        }
+
+        private async void ConfigDataGridDrop(object sender, DragEventArgs e)
+        {
+            var files = e.Data.GetFiles()?.ToArray();
+            if (files == null || files.Length == 0) return;
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    var path = file.Path.LocalPath;
+                    var ext = Path.GetExtension(path).ToLower();
+
+                    if (ext == ".opk")
+                    {
+                        using var stream = File.OpenRead(path);
+                        var config = await ConfigPacker.UnpackAsync(stream);
+                        var configRepo = SP.GetService<IConfigRepository>();
+                        await configRepo.SaveAsync(config);
+                        configService.Configs.Add(config);
+                    }
+                    else if (ext == ".pbc")
+                    {
+                        var filePath = path;
+                        await new MainDialog(new PasswordDialog("Enter password to decrypt config:", password =>
+                        {
+                            ImportEncryptedAsync(filePath, password);
+                        }), "Import Encrypted").ShowDialog(TopLevel.GetTopLevel(this) as Window);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Alert.Exception(ex);
+                }
+            }
+
+            await vm.RescanAsync();
         }
     }
 }
