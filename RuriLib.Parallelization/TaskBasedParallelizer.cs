@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace RuriLib.Parallelization
 {
     /// <summary>
-    /// Parallelizer that expoits batches of multiple tasks and the WaitAll function.
+    /// Parallelizer that uses Channel&lt;T&gt; for efficient producer-consumer item distribution
+    /// with semaphore-based concurrency control.
     /// </summary>
     public class TaskBasedParallelizer<TInput, TOutput> : Parallelizer<TInput, TOutput>
     {
         #region Private Fields
-        private int BatchSize => MaxDegreeOfParallelism * 2;
+        private int ChannelCapacity => MaxDegreeOfParallelism * 2;
         private SemaphoreSlim semaphore;
-        private ConcurrentQueue<TInput> queue;
         private int savedDOP;
         private bool dopDecreaseRequested;
         #endregion
@@ -130,31 +130,57 @@ namespace RuriLib.Parallelization
             semaphore = new SemaphoreSlim(degreeOfParallelism, MaxDegreeOfParallelism);
             dopDecreaseRequested = false;
 
-            // Skip the items
-            using var items = workItems.Skip(skip).GetEnumerator();
-
-            // Create the queue
-            queue = new ConcurrentQueue<TInput>();
-
-            // Enqueue the first batch (at most BatchSize items)
-            while (queue.Count < BatchSize && items.MoveNext())
+            // Create a bounded channel for producer-consumer item distribution
+            var channel = Channel.CreateBounded<TInput>(new BoundedChannelOptions(ChannelCapacity)
             {
-                queue.Enqueue(items.Current);
-            }
+                SingleReader = true,
+                SingleWriter = true,
+                FullMode = BoundedChannelFullMode.Wait
+            });
+
+            // Producer task: enumerate work items and write to the channel
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    foreach (var item in workItems.Skip(skip))
+                    {
+                        if (softCTS.IsCancellationRequested)
+                            break;
+
+                        await channel.Writer.WriteAsync(item, softCTS.Token).ConfigureAwait(false);
+                    }
+                }
+                catch (OperationCanceledException) { }
+                finally
+                {
+                    channel.Writer.Complete();
+                }
+            });
 
             try
             {
-                // While there are items in the queue and we didn't cancel, dequeue one, wait and then
-                // queue another task if there are more to queue
-                while (!queue.IsEmpty && !softCTS.IsCancellationRequested)
+                // Consumer: read items from the channel and process them with semaphore-based concurrency
+                while (!softCTS.IsCancellationRequested)
                 {
-                    WAIT:
+                    TInput item;
+                    try
+                    {
+                        item = await channel.Reader.ReadAsync(softCTS.Token).ConfigureAwait(false);
+                    }
+                    catch (ChannelClosedException)
+                    {
+                        break; // No more items
+                    }
 
-                    // Wait for the semaphore
+                    WAIT:
                     await semaphore.WaitAsync(softCTS.Token).ConfigureAwait(false);
 
                     if (softCTS.IsCancellationRequested)
+                    {
+                        semaphore?.Release();
                         break;
+                    }
 
                     if (dopDecreaseRequested || IsCPMLimited())
                     {
@@ -163,28 +189,10 @@ namespace RuriLib.Parallelization
                         goto WAIT;
                     }
 
-                    // If the current batch is running out
-                    if (queue.Count < MaxDegreeOfParallelism)
-                    {
-                        // Queue more items until the BatchSize is reached OR until the enumeration finished
-                        while (queue.Count < BatchSize && items.MoveNext())
-                        {
-                            queue.Enqueue(items.Current);
-                        }
-                    }
-
-                    // If we can dequeue an item, run it
-                    if (queue.TryDequeue(out TInput item))
-                    {
-                        // The task will release its slot no matter what
-                        _ = taskFunction.Invoke(item)
-                            .ContinueWith(_ => semaphore?.Release())
-                            .ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        semaphore?.Release();
-                    }
+                    // Fire and forget the task; it will release the semaphore slot when done
+                    _ = taskFunction.Invoke(item)
+                        .ContinueWith(_ => semaphore?.Release())
+                        .ConfigureAwait(false);
                 }
 
                 // Wait for every remaining task from the last batch to finish unless aborted

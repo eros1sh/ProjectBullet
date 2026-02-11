@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 
 namespace ProjectBullet.Native.ViewModels
 {
@@ -47,6 +48,38 @@ namespace ProjectBullet.Native.ViewModels
 
         public string MemoryUsage => $"{Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024} MB";
 
+        public string HitRate
+        {
+            get
+            {
+                var tested = TotalTested;
+                if (tested == 0) return "0.0%";
+                return $"{(double)TotalHits / tested * 100:F1}%";
+            }
+        }
+
+        public Visibility ProgressBarVisibility =>
+            jobManagerService.Jobs.Any(j => j.Status == JobStatus.Running) ? Visibility.Visible : Visibility.Collapsed;
+
+        public double OverallProgressPercent
+        {
+            get
+            {
+                var totalSize = jobManagerService.Jobs.OfType<MultiRunJob>().Sum(j => j.DataPool?.Size ?? 0);
+                if (totalSize == 0) return 0;
+                return Math.Min((double)TotalTested / totalSize * 100, 100);
+            }
+        }
+
+        public string OverallProgressText
+        {
+            get
+            {
+                var totalSize = jobManagerService.Jobs.OfType<MultiRunJob>().Sum(j => j.DataPool?.Size ?? 0);
+                return $"{OverallProgressPercent:F1}% ({TotalTested:N0} / {totalSize:N0})";
+            }
+        }
+
         private ObservableCollection<JobMonitorItem> jobItems = new();
         public ObservableCollection<JobMonitorItem> JobItems
         {
@@ -82,6 +115,10 @@ namespace ProjectBullet.Native.ViewModels
             OnPropertyChanged(nameof(TotalErrors));
             OnPropertyChanged(nameof(TotalCPM));
             OnPropertyChanged(nameof(MemoryUsage));
+            OnPropertyChanged(nameof(HitRate));
+            OnPropertyChanged(nameof(ProgressBarVisibility));
+            OnPropertyChanged(nameof(OverallProgressPercent));
+            OnPropertyChanged(nameof(OverallProgressText));
 
             var items = new List<JobMonitorItem>();
             foreach (var job in jobManagerService.Jobs)
@@ -144,6 +181,12 @@ namespace ProjectBullet.Native.ViewModels
 
     public class JobMonitorItem
     {
+        private static readonly SolidColorBrush GreenBrush = new(Color.FromRgb(0x4C, 0xAF, 0x50));
+        private static readonly SolidColorBrush OrangeBrush = new(Color.FromRgb(0xFF, 0x98, 0x00));
+        private static readonly SolidColorBrush PurpleBrush = new(Color.FromRgb(0x9C, 0x27, 0xB0));
+        private static readonly SolidColorBrush RedBrush = new(Color.FromRgb(0xF4, 0x43, 0x36));
+        private static readonly SolidColorBrush GrayBrush = new(Color.FromRgb(0x9E, 0x9E, 0x9E));
+
         public int Id { get; set; }
         public string Status { get; set; }
         public string ConfigName { get; set; }
@@ -157,5 +200,15 @@ namespace ProjectBullet.Native.ViewModels
         public int Bots { get; set; }
         public string Elapsed { get; set; }
         public string ProgressString => $"{Progress:F1}%";
+        public double ProgressBarWidth => Progress / 100.0 * 90.0;
+
+        public SolidColorBrush StatusColor => Status switch
+        {
+            "Running" => GreenBrush,
+            "Waiting" => OrangeBrush,
+            "Pausing" or "Paused" => PurpleBrush,
+            "Stopping" => RedBrush,
+            _ => GrayBrush
+        };
     }
 }

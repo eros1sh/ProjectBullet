@@ -153,6 +153,17 @@ namespace RuriLib.Functions.Http
                 options.CustomHeaders["User-Agent"] = profile.UserAgent;
             }
 
+            // Apply cipher suites from profile (TLS fingerprint) if not already set
+            if (profile.CipherSuites != null && !options.UseCustomCipherSuites)
+            {
+                options.UseCustomCipherSuites = true;
+                options.CustomCipherSuites = new List<string>();
+                foreach (var suite in profile.CipherSuites)
+                {
+                    options.CustomCipherSuites.Add(suite.ToString());
+                }
+            }
+
             // If Random profile, use RandomUA provider if available
             if (options.BrowserProfile == BrowserProfileName.Random && data.Providers.RandomUA != null)
             {

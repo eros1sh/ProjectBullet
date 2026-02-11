@@ -8,7 +8,8 @@ namespace RuriLib.Functions.Http
     {
         v10,
         v11,
-        v20
+        v20,
+        v30
     }
 
     public class HttpOptions

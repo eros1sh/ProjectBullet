@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net.Security;
 
 namespace RuriLib.Models.Http
 {
@@ -7,6 +8,7 @@ namespace RuriLib.Models.Http
         public string Name { get; set; }
         public string UserAgent { get; set; }
         public Dictionary<string, string> Headers { get; set; } = new();
+        public TlsCipherSuite[] CipherSuites { get; set; }
     }
 
     public enum BrowserProfileName

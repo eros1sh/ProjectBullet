@@ -10,6 +10,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace ProjectBullet.Native.Views.Pages
 {
@@ -25,6 +26,7 @@ namespace ProjectBullet.Native.Views.Pages
         private readonly ConfigLoliCode loliCodePage;
         private readonly ConfigCSharpCode cSharpPage;
         private readonly ConfigLoliScript loliScriptPage;
+        private readonly DispatcherTimer autoSaveTimer;
 
         public ConfigEditor()
         {
@@ -44,6 +46,22 @@ namespace ProjectBullet.Native.Views.Pages
             loliScriptPage = new();
 
             debuggerFrame.Content = debugger;
+
+            // Auto-save timer (every 2 minutes)
+            autoSaveTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(2) };
+            autoSaveTimer.Tick += async (_, _) =>
+            {
+                try
+                {
+                    if (vm.Config != null && !vm.Config.IsRemote)
+                    {
+                        OnPageChanged();
+                        await vm.Save();
+                    }
+                }
+                catch { /* Silent auto-save failure */ }
+            };
+            autoSaveTimer.Start();
         }
 
         public void NavigateTo(ConfigEditorSection section)

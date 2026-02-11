@@ -59,7 +59,12 @@ namespace RuriLib.Functions.Http
                 Timeout = options.ReadWriteTimeout
             };
 
-            if (httpVersion == HttpVersionOption.v20)
+            if (httpVersion == HttpVersionOption.v30)
+            {
+                client.DefaultRequestVersion = new Version(3, 0);
+                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+            }
+            else if (httpVersion == HttpVersionOption.v20)
             {
                 client.DefaultRequestVersion = System.Net.HttpVersion.Version20;
                 client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;

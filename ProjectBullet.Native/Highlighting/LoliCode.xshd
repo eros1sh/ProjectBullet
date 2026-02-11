@@ -28,10 +28,14 @@
 
   <Color name="Script.Delimiter" foreground="#6F81FF" />
   <Color name="Script.Output" foreground="#FFBC80" />
-  
+
   <Color name="Comment" foreground="#608B4E" />
   <Color name="String" foreground="#CE9178" />
   <Color name="Keyword" foreground="#98CFFF" />
+  <Color name="Keyword.Network" foreground="#4FC3F7" />
+  <Color name="Keyword.Crypto" foreground="#FF7043" />
+  <Color name="Keyword.Data" foreground="#66BB6A" />
+  <Color name="Keyword.Debug" foreground="#78909C" />
   <Color name="CSKeyword" foreground="#5DADE2" />
   
     <!-- This is the main ruleset. -->
@@ -193,6 +197,66 @@
       <Word>PROXY</Word>
       <Word>MARK</Word>
       <Word>UNMARK</Word>
+    </Keywords>
+
+    <Keywords color="Keyword.Network">
+      <Word>GraphQLQuery</Word>
+      <Word>GraphQLQueryWithHeaders</Word>
+      <Word>GrpcUnaryCall</Word>
+      <Word>GrpcJsonCall</Word>
+      <Word>DnsResolve</Word>
+      <Word>DnsResolveIPv4</Word>
+      <Word>DnsResolveIPv6</Word>
+      <Word>DnsReverseLookup</Word>
+      <Word>DnsGetHostName</Word>
+      <Word>DohResolve</Word>
+      <Word>DohResolveFirst</Word>
+      <Word>MqttConnect</Word>
+      <Word>MqttPublish</Word>
+      <Word>MqttSubscribeAndReceive</Word>
+      <Word>MqttDisconnect</Word>
+      <Word>UdpSendRead</Word>
+      <Word>UdpSend</Word>
+      <Word>TorSetProxy</Word>
+      <Word>TorNewCircuit</Word>
+      <Word>TorCheckConnection</Word>
+    </Keywords>
+
+    <Keywords color="Keyword.Crypto">
+      <Word>TotpGenerate</Word>
+      <Word>HotpGenerate</Word>
+      <Word>TotpValidate</Word>
+      <Word>QrCodeGenerate</Word>
+      <Word>QrCodeToBase64</Word>
+      <Word>QrCodeToFile</Word>
+    </Keywords>
+
+    <Keywords color="Keyword.Data">
+      <Word>XmlParse</Word>
+      <Word>XmlParseAll</Word>
+      <Word>XmlGetAttribute</Word>
+      <Word>XmlCount</Word>
+      <Word>HtmlFormExtract</Word>
+      <Word>HtmlFormGetAction</Word>
+      <Word>HtmlFormGetMethod</Word>
+      <Word>HtmlFormGetFields</Word>
+      <Word>HtmlFormSetValue</Word>
+      <Word>PythonExecute</Word>
+      <Word>PythonExecuteWithVars</Word>
+      <Word>PythonEval</Word>
+      <Word>JsonPathQuery</Word>
+      <Word>JsonPathQueryAll</Word>
+    </Keywords>
+
+    <Keywords color="Keyword.Debug">
+      <Word>WatchVariables</Word>
+      <Word>WatchVariable</Word>
+      <Word>WatchLog</Word>
+      <Word>RetryOnException</Word>
+      <Word>ShouldRetry</Word>
+      <Word>ResetRetryCounter</Word>
+      <Word>LoopWhile</Word>
+      <Word>LoopReset</Word>
     </Keywords>
 
     <Span color="Block">

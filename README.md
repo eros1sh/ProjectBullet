@@ -2,6 +2,16 @@
 
 A powerful, extensible automation and testing toolkit built with .NET 9 and WPF. ProjectBullet provides a rich set of tools for HTTP request automation, credential testing, proxy management, and more — all through an intuitive native Windows interface.
 
+## Screenshots
+
+| Home | Monitor | Marketplace |
+|------|---------|-------------|
+| ![Home](ProjectBullet.github/home.png) | ![Monitor](ProjectBullet.github/monitor.png) | ![Marketplace](ProjectBullet.github/marketplace.png) |
+
+| Settings | About |
+|----------|-------|
+| ![Settings](ProjectBullet.github/pbsettings.png) | ![About](ProjectBullet.github/about.png) |
+
 ## Features
 
 ### Core Functionality
@@ -13,7 +23,8 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 
 ### HTTP & Networking
 - **HTTP/2 Support** — Native HTTP/2 protocol support via .NET SystemNet library, configurable per-request
-- **TLS Fingerprint Profiles** — Mimic real browser TLS fingerprints (Chrome 120, Firefox 121, Safari 17, Edge 120) to avoid detection
+- **HTTP/3 (QUIC) Support** — Experimental HTTP/3 support via SocketsHttpHandler on supported platforms
+- **TLS Fingerprint Profiles** — Mimic real browser TLS fingerprints (Chrome 120, Firefox 121, Safari 17, Edge 120) with browser-specific cipher suite ordering to avoid detection
 - **Anti-Detection Header Profiles** — Automatically apply browser-accurate headers including `Sec-CH-UA`, `Sec-Fetch-*`, and proper `Accept` headers per browser profile
 - **Proxy Support** — HTTP, SOCKS4, SOCKS4a, and SOCKS5 proxy support with automatic rotation, health checking, and proxy sources
 - **Cloudflare Bypass** — Built-in Puppeteer-based Cloudflare challenge solver with configurable timeout and cookie extraction
@@ -21,9 +32,28 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 
 ### Automation Blocks
 - **HTTP Requests** — GET, POST, PUT, DELETE, PATCH, multipart, raw, and basic auth with full header control
+- **GraphQL Requests** — Send GraphQL queries with variables, operation names, and custom headers
+- **gRPC Requests** — Make gRPC unary calls with raw protobuf bytes or JSON transcoding
+- **DNS Lookup** — Resolve hostnames to IPv4/IPv6, reverse DNS lookup, and get local hostname
+- **DNS-over-HTTPS** — Secure DNS queries via Cloudflare or Google DoH endpoints with JSON response parsing
+- **MQTT Protocol** — Connect, publish, subscribe, and receive messages from MQTT brokers with QoS and TLS support
+- **TOTP/HOTP Generation** — Generate and validate RFC 6238/4226 time-based and counter-based one-time passwords
+- **QR Code Generation** — Generate QR codes as PNG bytes, Base64 strings, or files
+- **XML Parsing** — XPath queries, attribute extraction, inner text, element counting, and element name listing
+- **HTML Form Parsing** — Extract form fields, action URLs, methods, and set field values for automated form submission
+- **Retry & Loop Control** — Configurable retry with exponential backoff, while loops with max iterations, and delay blocks
+- **Variable Watch** — Debug blocks to enumerate, inspect, and log variable values during execution
+- **TOR Proxy Integration** — Set SOCKS5 proxy to local TOR instance, request new circuits, and verify TOR connection
+- **Python Script Execution** — Execute Python scripts, evaluate expressions, and pass variables via IronPython
 - **Puppeteer Browser Automation** — Headless/headful Chrome control for JavaScript-heavy sites
 - **String Functions** — Comprehensive string manipulation (regex, replace, split, substring, encoding, hashing)
 - **Crypto** — AES, RSA, HMAC, SHA, MD5, Base64, JWT, and more — optimized with .NET 9 static HashData APIs
+- **Math Functions** — Arithmetic, rounding, min/max, trigonometry, logarithms, and expression evaluation
+- **DateTime Functions** — Parse, format, add/subtract, Unix timestamps, timezone conversion, and component extraction
+- **Random Functions** — Random integers, floats, strings, passwords, GUIDs, hex, bytes, and weighted selection
+- **JSON Functions** — JsonPath queries, value set/remove, deep merge, array operations, and pretty print
+- **List & Dictionary Functions** — Comprehensive collection operations (contains, take, skip, reverse, merge, keys, values)
+- **UDP Communication** — Send and receive UDP datagrams with configurable timeouts
 - **Captcha Solving** — Integration with popular captcha solving services
 - **Interop** — Execute external programs, PowerShell scripts, and system commands
 
@@ -32,8 +62,10 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 - **Drag & Drop Config Import** — Drop `.opk` or `.pbc` files directly onto the config list to import
 - **Customizable Themes** — Full color customization for backgrounds, text, buttons, and status indicators
 - **Background Images** — Set custom background images with opacity control
-- **Job Monitor** — Real-time monitoring of all running jobs with live statistics
+- **Job Monitor** — Redesigned real-time monitoring with summary cards, overall progress bar, per-job progress bars, colored status indicators, and hit rate tracking
 - **Built-in Debugger** — Step through configs with variable inspection and breakpoints
+- **Syntax Highlighting** — Enhanced LoliCode editor with category-based keyword coloring (Network, Crypto, Data, Debug blocks)
+- **Auto-Save** — Configs are automatically saved every 2 minutes while editing
 
 ### Marketplace
 - **Full API Integration** — Browse, search, download, upload, and manage configs/plugins via `projectbullet.eros.sh/api`
@@ -85,6 +117,15 @@ A powerful, extensible automation and testing toolkit built with .NET 9 and WPF.
 - **Config Encryption** — Encrypt configs with password protection for secure sharing
 - **Plugin Sandboxing** — Plugins run within the application's managed environment
 
+### Performance
+- **Channel-Based Parallelizer** — Task distribution engine uses `System.Threading.Channels` for efficient producer-consumer pattern with built-in backpressure
+- **SQLite WAL Mode** — Write-Ahead Logging enabled for better concurrent read/write performance
+- **ListView Virtualization** — Hit and job lists use UI virtualization with recycling for smooth scrolling with large datasets
+- **Static HashData APIs** — All hash/HMAC computations use .NET 9 zero-allocation static `HashData()` methods
+- **FrozenDictionary** — Type-mapping lookups in block descriptors use `System.Collections.Frozen` for faster read-only dictionary access
+- **Fast Line Counting** — `FileDataPool` uses buffered byte-scanning with `ArrayPool<byte>` for wordlist line counting
+- **Span-Based Operations** — Leverages `Span<byte>` and `ReadOnlySpan` across crypto and data processing paths
+
 ## Requirements
 
 - **Operating System**: Windows 10/11 (x64, x86, or ARM64)
@@ -122,7 +163,7 @@ ProjectBullet/
 │   └── Services/                     # Plugin repository, settings services
 ├── RuriLib.Http/                     # Custom HTTP client library
 ├── RuriLib.Proxies/                  # Proxy client library (HTTP/SOCKS4/5)
-├── RuriLib.Parallelization/          # Parallel execution engine
+├── RuriLib.Parallelization/          # Parallel execution engine (Channel<T> based)
 ├── ProjectBullet.Core/               # Application core (EF Core, repositories, services)
 ├── ProjectBullet.Native/             # WPF desktop application
 │   ├── Views/                        # XAML pages and dialogs
@@ -158,7 +199,7 @@ Application settings are accessible from the **Settings** page and are persisted
 
 - **.NET 9.0** — Runtime and framework
 - **WPF** — Windows desktop UI with MVVM pattern
-- **Entity Framework Core 9.0.3** — Data persistence with SQLite
+- **Entity Framework Core 9.0.3** — Data persistence with SQLite (WAL mode)
 - **Roslyn 5.0.0** — C# runtime scripting and compilation
 - **Jint 4.5.0** — JavaScript (ES2024) execution engine
 - **IronPython 3.4.1** — Python 3 scripting support
@@ -170,14 +211,10 @@ Application settings are accessible from the **Settings** page and are persisted
 - **MailKit 4.14.1** — SMTP/POP3/IMAP email protocols
 - **SSH.NET 2025.1.0** — SSH protocol support
 - **FluentFTP 53.0.2** — FTP protocol support
+- **MQTTnet 4.3.7.1207** — MQTT protocol support
+- **QRCoder 1.6.0** — QR code generation
 - **BCrypt.Net** — Password hashing
 - **LiveCharts** — Real-time charting
-
-### Performance Optimizations
-- **Static HashData APIs** — All hash/HMAC computations (MD5, SHA1, SHA256, SHA384, SHA512) use .NET 9 zero-allocation static `HashData()` methods instead of `Create()`+`ComputeHash()` pattern
-- **FrozenDictionary** — Type-mapping lookups in block descriptors use `System.Collections.Frozen` for faster read-only dictionary access
-- **Fast Line Counting** — `FileDataPool` uses buffered byte-scanning with `ArrayPool<byte>` for wordlist line counting instead of LINQ `Count()`, significantly faster for large files
-- **Span-Based Operations** — Leverages `Span<byte>` and `ReadOnlySpan` across crypto and data processing paths
 
 ## CI/CD
 
@@ -187,6 +224,22 @@ GitHub Actions workflows with manual `workflow_dispatch` trigger support:
 - **Build + Release | Staging** — Same for `staging` branch with prerelease tagging
 - **Run Tests** — Automated test execution on push/PR to `master` and `staging`
 - **Docker Build** — Multi-platform Docker image build and push
+
+## Changelog
+
+### v0.0.2 (Current)
+- **17 New Automation Blocks**: GraphQL, gRPC, DNS Lookup, DNS-over-HTTPS, MQTT, TOTP/HOTP, QR Code, XML Parse, HTML Form Parser, Retry/Loop Control, Variable Watch, TOR Proxy, Python Script Enhancement
+- **HTTP/2 & HTTP/3 Support**: Full HTTP/2 support via SystemNet, experimental HTTP/3 (QUIC) support
+- **TLS Fingerprint Profiles**: Browser-specific cipher suite ordering for Chrome, Firefox, Safari, Edge
+- **Monitor Page Redesign**: Summary cards with hit rate, overall progress bar, per-job progress bars, colored status indicators
+- **Enhanced Syntax Highlighting**: Category-based keyword coloring in LoliCode editor (Network, Crypto, Data, Debug)
+- **Auto-Save Config**: Automatic config saving every 2 minutes in the editor
+- **Channel-Based Parallelizer**: Refactored task distribution engine using `System.Threading.Channels` for better backpressure
+- **SQLite WAL Mode**: Write-Ahead Logging for improved concurrent database performance
+- **ListView Virtualization**: Recycling mode enabled on hit and job lists
+
+### v0.0.1
+- Initial release with core functionality, marketplace integration, Telegram bot, auto-update system
 
 ## Contributing
 

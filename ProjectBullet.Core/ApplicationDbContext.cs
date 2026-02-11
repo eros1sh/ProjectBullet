@@ -11,7 +11,8 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions options)
         : base(options)
     {
-        
+        // Enable WAL mode for better concurrent read/write performance
+        Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
     }
 
     public DbSet<ProxyEntity> Proxies { get; set; }
