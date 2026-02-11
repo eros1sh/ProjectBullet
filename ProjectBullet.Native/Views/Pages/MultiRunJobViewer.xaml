@@ -90,6 +90,11 @@
                     <Label FontWeight="Bold">Custom Inputs:</Label>
                     <Label Content="{Binding CustomInputsInfo}" Margin="5 0 0 0" />
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 -5"
+                    Visibility="{Binding HasScheduling, Converter={StaticResource ResourceKey=BoolToVis}}">
+                    <Label FontWeight="Bold">Scheduling:</Label>
+                    <Label Content="{Binding SchedulingInfo}" Margin="5 0 0 0" />
+                </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <Label Content="{Binding RemainingWaitString}"

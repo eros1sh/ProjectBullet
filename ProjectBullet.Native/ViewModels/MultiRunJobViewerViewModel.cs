@@ -2,8 +2,10 @@ using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using Newtonsoft.Json;
 using ProjectBullet.Core.Entities;
 using ProjectBullet.Core.Models.Hits;
+using ProjectBullet.Core.Models.Jobs;
 using ProjectBullet.Core.Models.Proxies.Sources;
 using ProjectBullet.Core.Repositories;
 using ProjectBullet.Core.Services;
@@ -104,6 +106,20 @@ namespace ProjectBullet.Native.ViewModels
 
         public string CustomInputsInfo => string.Join(", ", MultiRunJob.CustomInputsAnswers.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
         public bool HasCustomInputs => MultiRunJob.Config != null && MultiRunJob.Config.Settings.InputSettings.CustomInputs.Any();
+
+        public bool HasScheduling => schedulingInfo != null;
+
+        private string schedulingInfo;
+        public string SchedulingInfo
+        {
+            get => schedulingInfo;
+            set
+            {
+                schedulingInfo = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasScheduling));
+            }
+        }
 
         public bool EnableJobLog => obSettingsService.Settings.GeneralSettings.EnableJobLogging;
         #endregion
@@ -243,6 +259,9 @@ namespace ProjectBullet.Native.ViewModels
             }
             
             HitOutputsInfo = sb.ToString();
+
+            // Load scheduling info
+            LoadSchedulingInfo();
             #endregion
 
             #region Chart setup
@@ -534,6 +553,33 @@ namespace ProjectBullet.Native.ViewModels
         #endregion
 
         #region Utils
+        private void LoadSchedulingInfo()
+        {
+            try
+            {
+                var jobRepo = SP.GetService<IJobRepository>();
+                var entity = jobRepo.GetAll().FirstOrDefault(j => j.Id == MultiRunJob.Id);
+                if (entity?.JobOptions == null) return;
+
+                var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, SerializationBinder = new RuriLib.Helpers.SafeSerializationBinder() };
+                var wrapper = JsonConvert.DeserializeObject<JobOptionsWrapper>(entity.JobOptions, settings);
+                if (wrapper.Options is MultiRunJobOptions opts)
+                {
+                    var parts = new List<string>();
+                    if (opts.AutoRestartEnabled)
+                        parts.Add(opts.AutoRestartDelayMinutes > 0 ? $"Auto-restart (delay: {opts.AutoRestartDelayMinutes}m)" : "Auto-restart");
+                    if (opts.StaleDetectionEnabled)
+                        parts.Add($"Stale detection (>{opts.StaleThresholdPercent}%, {opts.StaleTimeoutMinutes}m timeout)");
+
+                    if (parts.Count > 0)
+                        SchedulingInfo = string.Join(" | ", parts);
+                }
+            }
+            catch
+            {
+            }
+        }
+
         private void AskCustomInputs()
         {
             MultiRunJob.CustomInputsAnswers.Clear();

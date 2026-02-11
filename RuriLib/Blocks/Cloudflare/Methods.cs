@@ -1,4 +1,5 @@
 using RuriLib.Attributes;
+using RuriLib.Blocks.Puppeteer.Browser;
 using RuriLib.Logging;
 using RuriLib.Models.Bots;
 using System;
@@ -12,7 +13,7 @@ namespace RuriLib.Blocks.Cloudflare
     public static class Methods
     {
         [Block("Solves a Cloudflare JS challenge by navigating with Puppeteer and extracting clearance cookies",
-            extraInfo = "Opens a browser, navigates to the URL, waits for the Cloudflare challenge to be solved, then extracts cookies. Requires Puppeteer browser to be opened first.")]
+            extraInfo = "Automatically opens a browser if needed, navigates to the URL, waits for the Cloudflare challenge to be solved, then extracts cookies.")]
         public static async Task<Dictionary<string, string>> CloudflareBypassPuppeteer(
             BotData data,
             string url,
@@ -22,8 +23,15 @@ namespace RuriLib.Blocks.Cloudflare
             data.Logger.LogHeader();
             data.Logger.Log($"Attempting Cloudflare bypass for {url}", "#F48120");
 
-            var page = data.TryGetObject<PuppeteerSharp.IPage>("puppeteerPage")
-                ?? throw new Exception("No Puppeteer page found. Please open a browser first using PuppeteerOpenBrowser.");
+            // Auto-open browser if not already open
+            var page = data.TryGetObject<PuppeteerSharp.IPage>("puppeteerPage");
+            if (page == null)
+            {
+                data.Logger.Log("No browser found, opening one automatically...", "#F48120");
+                await Puppeteer.Browser.Methods.PuppeteerOpenBrowser(data).ConfigureAwait(false);
+                page = data.TryGetObject<PuppeteerSharp.IPage>("puppeteerPage")
+                    ?? throw new Exception("Failed to open browser automatically.");
+            }
 
             await page.GoToAsync(url, new PuppeteerSharp.NavigationOptions
             {
@@ -67,7 +75,7 @@ namespace RuriLib.Blocks.Cloudflare
 
             if (closeBrowserAfter)
             {
-                var browser = data.TryGetObject<PuppeteerSharp.IBrowser>("puppeteerBrowser");
+                var browser = data.TryGetObject<PuppeteerSharp.IBrowser>("puppeteer");
                 if (browser != null)
                 {
                     await browser.CloseAsync().ConfigureAwait(false);

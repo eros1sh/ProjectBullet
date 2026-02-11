@@ -154,6 +154,39 @@
                           Value="{Binding ProxyBanTimeSeconds}"
                           Width="120"/>
                         </StackPanel>
+
+                        <!-- Scheduling -->
+                        <Label Foreground="{DynamicResource ForegroundCustom}" Content="Scheduling:" Margin="0 10 0 0" />
+                        <CheckBox
+                            Margin="5 5 0 0"
+                            Content="Auto restart after completion"
+                            IsChecked="{Binding AutoRestartEnabled}" />
+                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                            <Label>Restart delay (minutes, 0 = immediate)</Label>
+                            <NumericUpDown Minimum="0"
+                                Maximum="2147483647"
+                                Increment="1"
+                                Value="{Binding AutoRestartDelayMinutes}"
+                                Width="120"/>
+                        </StackPanel>
+                        <CheckBox
+                            Margin="5 5 0 0"
+                            Content="Stale job detection (auto-restart stuck jobs)"
+                            IsChecked="{Binding StaleDetectionEnabled}" />
+                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                            <Label>Stale threshold (%)</Label>
+                            <NumericUpDown Minimum="0"
+                                Maximum="100"
+                                Increment="1"
+                                Value="{Binding StaleThresholdPercent}"
+                                Width="100"/>
+                            <Label Margin="10 0 0 0">Timeout (minutes)</Label>
+                            <NumericUpDown Minimum="1"
+                                Maximum="2147483647"
+                                Increment="1"
+                                Value="{Binding StaleTimeoutMinutes}"
+                                Width="100"/>
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Row="0"

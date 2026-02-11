@@ -414,6 +414,58 @@ namespace ProjectBullet.Avalonia.Views.Dialogs
         }
         #endregion
 
+        #region Scheduling
+        public bool AutoRestartEnabled
+        {
+            get => Options.AutoRestartEnabled;
+            set
+            {
+                Options.AutoRestartEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int AutoRestartDelayMinutes
+        {
+            get => Options.AutoRestartDelayMinutes;
+            set
+            {
+                Options.AutoRestartDelayMinutes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool StaleDetectionEnabled
+        {
+            get => Options.StaleDetectionEnabled;
+            set
+            {
+                Options.StaleDetectionEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public float StaleThresholdPercent
+        {
+            get => Options.StaleThresholdPercent;
+            set
+            {
+                Options.StaleThresholdPercent = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int StaleTimeoutMinutes
+        {
+            get => Options.StaleTimeoutMinutes;
+            set
+            {
+                Options.StaleTimeoutMinutes = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
         public MultiRunJobOptionsViewModel(MultiRunJobOptions options)
         {
             Options = options ?? JobOptionsFactory.CreateNew(JobType.MultiRun) as MultiRunJobOptions;

@@ -5,6 +5,22 @@ All notable changes to ProjectBullet will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-02-11
+
+### Added
+
+#### Job Auto-Restart & Stale Detection
+- New **Auto Restart** option: automatically restart jobs after completion with configurable delay
+- New **Stale Job Detection**: detects jobs stuck at high progress and auto-restarts them
+- Configurable threshold percentage and timeout duration for stale detection
+- Scheduling options available in both Job Viewer info panel and Job Options Dialog
+- Available in both WPF (Native) and Avalonia (Cross-Platform) builds
+
+#### Updated Branding
+- New application logo and icons across all platforms (Native, Avalonia, Console, Updater)
+- Generated multi-resolution ICO files (16, 32, 48, 64, 128, 256)
+- Updated square padded logo variants with transparent and dark backgrounds
+
 ## [0.0.4] - 2026-02-11
 
 ### Added

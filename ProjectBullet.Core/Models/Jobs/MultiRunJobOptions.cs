@@ -85,4 +85,29 @@ public class MultiRunJobOptions : JobOptions
     /// The options for the outputs where hits will be stored.
     /// </summary>
     public List<HitOutputOptions> HitOutputs { get; set; } = new List<HitOutputOptions>();
+
+    /// <summary>
+    /// Whether to automatically restart the job from the beginning after it completes.
+    /// </summary>
+    public bool AutoRestartEnabled { get; set; } = false;
+
+    /// <summary>
+    /// The delay in minutes before restarting the job after completion. 0 = immediate.
+    /// </summary>
+    public int AutoRestartDelayMinutes { get; set; } = 0;
+
+    /// <summary>
+    /// Whether to detect stale jobs (stuck at high progress) and auto-restart them.
+    /// </summary>
+    public bool StaleDetectionEnabled { get; set; } = false;
+
+    /// <summary>
+    /// The progress percentage threshold above which the job is considered potentially stale.
+    /// </summary>
+    public float StaleThresholdPercent { get; set; } = 99f;
+
+    /// <summary>
+    /// The timeout in minutes after which a stale job will be restarted.
+    /// </summary>
+    public int StaleTimeoutMinutes { get; set; } = 10;
 }

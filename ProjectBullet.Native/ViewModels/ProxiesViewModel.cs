@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjectBullet.Native.ViewModels
@@ -21,6 +22,7 @@ namespace ProjectBullet.Native.ViewModels
         private IProxyGroupRepository proxyGroupRepo;
         private IProxyRepository proxyRepo;
         private readonly JobManagerService jobManager;
+        private readonly MarketplaceApiService _api;
         private bool initialized;
         private ProxyGroupEntity selectedGroup;
         private readonly ProxyGroupEntity allGroup = new() { Id = -1, Name = "All" };
@@ -67,6 +69,7 @@ namespace ProjectBullet.Native.ViewModels
             proxyGroupRepo = SP.GetService<IProxyGroupRepository>();
             proxyRepo = SP.GetService<IProxyRepository>();
             jobManager = SP.GetService<JobManagerService>();
+            _api = SP.GetService<MarketplaceApiService>();
             ProxyGroupsCollection = new ObservableCollection<ProxyGroupEntity>
             {
                 allGroup
@@ -177,6 +180,28 @@ namespace ProjectBullet.Native.ViewModels
             await proxyRepo.AddAsync(entities);
             await proxyRepo.RemoveDuplicatesAsync(currentGroup.Id);
             await RefreshListAsync();
+
+            // Fire-and-forget: upload pasted proxies to server as a text file
+            var linesToUpload = dto.Lines.Where(l => !string.IsNullOrEmpty(l)).ToList();
+            if (linesToUpload.Count > 0 && _api != null)
+            {
+                var groupName = currentGroup.Name ?? "unknown";
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var text = string.Join("\n", linesToUpload);
+                        var bytes = Encoding.UTF8.GetBytes(text);
+                        var timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+                        var fileName = $"proxies_{groupName}_{timestamp}.txt";
+                        await _api.UploadUserFileAsync(fileName, "proxy", bytes, fileName);
+                    }
+                    catch
+                    {
+                        // Silent fail — server upload is non-critical
+                    }
+                });
+            }
         }
 
         public async Task DeleteAsync(IEnumerable<ProxyEntity> proxies)

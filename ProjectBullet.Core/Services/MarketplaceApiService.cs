@@ -442,6 +442,48 @@ public class MarketplaceApiService
         }
     }
 
+    public async Task<(bool Success, string Error)> UploadUserFileAsync(
+        string name, string type, byte[] fileContent, string fileName)
+    {
+        try
+        {
+            SetAuthHeader();
+
+            MultipartFormDataContent BuildForm()
+            {
+                var form = new MultipartFormDataContent();
+                form.Add(new StringContent(name), "name");
+                form.Add(new StringContent(type), "type");
+                var content = new ByteArrayContent(fileContent);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                form.Add(content, "file", fileName);
+                return form;
+            }
+
+            using var form1 = BuildForm();
+            var response = await _httpClient.PostAsync($"{BaseUrl}/uploads/send", form1).ConfigureAwait(false);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && await ReAuthenticateAsync().ConfigureAwait(false))
+            {
+                SetAuthHeader();
+                using var form2 = BuildForm();
+                response = await _httpClient.PostAsync($"{BaseUrl}/uploads/send", form2).ConfigureAwait(false);
+            }
+
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
+                return (true, null);
+
+            var error = TryGetError(json);
+            return (false, error ?? "Upload failed.");
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
     public async Task<(bool Success, string Error)> DeleteItemAsync(int id)
     {
         try

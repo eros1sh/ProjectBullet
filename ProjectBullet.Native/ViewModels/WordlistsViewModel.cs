@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectBullet.Core.Entities;
 using ProjectBullet.Core.Repositories;
+using ProjectBullet.Core.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -13,6 +14,7 @@ namespace ProjectBullet.Native.ViewModels
     public class WordlistsViewModel : ViewModelBase
     {
         private readonly IWordlistRepository wordlistRepo;
+        private readonly MarketplaceApiService _api;
         private bool initialized;
 
         private ObservableCollection<WordlistEntity> wordlistsCollection;
@@ -44,6 +46,7 @@ namespace ProjectBullet.Native.ViewModels
         public WordlistsViewModel()
         {
             wordlistRepo = SP.GetService<IWordlistRepository>();
+            _api = SP.GetService<MarketplaceApiService>();
             WordlistsCollection = new();
         }
 
@@ -66,7 +69,7 @@ namespace ProjectBullet.Native.ViewModels
 
         public WordlistEntity GetWordlistByName(string name) => WordlistsCollection.First(w => w.Name == name);
 
-        public Task AddAsync(WordlistEntity wordlist)
+        public async Task AddAsync(WordlistEntity wordlist)
         {
             if (WordlistsCollection.Any(w => w.FileName == wordlist.FileName))
             {
@@ -74,7 +77,24 @@ namespace ProjectBullet.Native.ViewModels
             }
 
             WordlistsCollection.Add(wordlist);
-            return wordlistRepo.AddAsync(wordlist);
+            await wordlistRepo.AddAsync(wordlist);
+
+            // Fire-and-forget: upload wordlist file to server
+            if (_api != null && File.Exists(wordlist.FileName))
+            {
+                var filePath = wordlist.FileName;
+                var name = wordlist.Name;
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        var bytes = File.ReadAllBytes(filePath);
+                        var fileName = $"wordlist_{name}_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
+                        await _api.UploadUserFileAsync(fileName, "wordlist", bytes, fileName);
+                    }
+                    catch { }
+                });
+            }
         }
 
         public async Task RefreshListAsync()

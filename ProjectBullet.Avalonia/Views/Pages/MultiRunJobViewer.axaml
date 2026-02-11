@@ -76,6 +76,11 @@
                     <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Custom Inputs:</TextBlock>
                     <TextBlock Text="{Binding CustomInputsInfo}" Margin="5,0,0,0" VerticalAlignment="Center" />
                 </StackPanel>
+                <StackPanel Orientation="Horizontal"
+                    IsVisible="{Binding HasScheduling}">
+                    <TextBlock FontWeight="Bold" VerticalAlignment="Center" Margin="5,0">Scheduling:</TextBlock>
+                    <TextBlock Text="{Binding SchedulingInfo}" Margin="5,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom" Spacing="2">
